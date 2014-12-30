@@ -1,0 +1,30 @@
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\FRMC Kinect.exe.config
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\FRMC Kinect.exe
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\FRMC Kinect.pdb
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\FRMC Kinect.csprojResolveAssemblyReference.cache
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\MainWindow.baml
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\MainWindow.g.cs
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\App.g.cs
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\FRMC Kinect_MarkupCompile.cache
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\FRMC Kinect.g.resources
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\FRMC_Kinect.Properties.Resources.resources
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\FRMC Kinect.csproj.GenerateResource.Cache
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\FRMC Kinect.exe
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\FRMC Kinect.pdb
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\Register.baml
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\Register.g.cs
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\Microsoft.Kinect.dll
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\Microsoft.Kinect.Face.dll
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\Microsoft.Kinect.Fusion.dll
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\Microsoft.Kinect.Tools.dll
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\Microsoft.Kinect.VisualGestureBuilder.dll
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\Microsoft.Kinect.Wpf.Controls.dll
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\Microsoft.Kinect.xml
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\Microsoft.Kinect.Face.xml
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\Microsoft.Kinect.Fusion.xml
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\Microsoft.Kinect.Tools.xml
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\Microsoft.Kinect.VisualGestureBuilder.xml
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\Microsoft.Kinect.Wpf.Controls.xml
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\WriteableBitmapEx.Wpf.dll
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\WriteableBitmapEx.Wpf.pdb
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\WriteableBitmapEx.Wpf.xml

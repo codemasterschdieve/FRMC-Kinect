@@ -1,0 +1,29 @@
+﻿<Window x:Class="FRMC_Kinect.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="FRMC Kinect" TextBlock.TextAlignment="Center" Height="800" Width="1400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20px"/>
+            <RowDefinition Height="20px"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="120px"/>
+            <RowDefinition Height="100px"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="100px"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Image Grid.Row="0" Source="Images\Logo_3.png" Name="FRMCKinectLogo" Height="200px"/>
+        <Line Grid.Row="1" Stroke="Black" Stretch="Fill" X2="1"/>
+        <TextBlock Grid.Row="3" TextAlignment="Center" FontSize="20"> 
+        Willkommen bei der FRMC Kinect Anwendung. Sie haben nun die Möglichkeit sich entweder zu registrieren  oder weiter auf den Media Player Controller <LineBreak/> zu navigieren. 
+        Sie können sich entweder über das <Hyperlink NavigateUri=" http://www.frmc.wi-stuttgart.de" RequestNavigate="Hyperlink_RequestNavigate"> Onlineportal</Hyperlink> registrieren oder Sie betätigen den Registrierungsbutton für den Registrierungsprozess. 
+        </TextBlock>
+        <Button Grid.Row="5" Content="Registration" FontSize="40px" Height="80px" Width="400px" Click="navigateBtn_Click"></Button>
+        <Button Grid.Row="7" Content="Weiter zum MC" FontSize="40px" Height="80px" Width="400px"></Button>
+        
+        
+        
+    </Grid>
+</Window>

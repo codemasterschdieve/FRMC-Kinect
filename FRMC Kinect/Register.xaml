@@ -1,0 +1,127 @@
+﻿<Window x:Class="FRMC_Kinect.Register"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Registration" TextBlock.TextAlignment="Center" Height="800" Width="1400">
+
+    <ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20px"/>
+                <RowDefinition Height="20px"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20px"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20px"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20px"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20px"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="80px"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="40px"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20px"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="60px"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20px"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="60px"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <!--<Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150px"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>-->
+            <Image Grid.Row="0" Source="Images\Logo_3.png" Name="FRMCKinectLogo" Height="200px"/>
+            <Line Grid.Row="1" Stroke="Black" Stretch="Fill" X2="1"/>
+
+            <Label x:Name="Firstnamelabel" Grid.Row="4" TextBlock.TextAlignment="Center" FontSize="20px">Vorname</Label>
+            <TextBox x:Name="Firstnametextbox" Grid.Row="4" Width="500px" FontSize="20px" TextAlignment="Left"></TextBox>
+            <Label x:Name="Lastnamelabel" Grid.Row="6" TextBlock.TextAlignment="Center" FontSize="20px">Nachname</Label>
+            <TextBox x:Name="Lastnametextbox" Grid.Row="6" Width="500px" FontSize="20px" TextAlignment="Left"></TextBox>
+            <Label x:Name="Emaillabel" Grid.Row="8" TextBlock.TextAlignment="Center" FontSize="20px">Email</Label>
+            <TextBox x:Name="Emailtextbox" Grid.Row="8" Width="500px" FontSize="20px" TextAlignment="Left"></TextBox>
+            <Label x:Name="Passwortlabel" Grid.Row="10" TextBlock.TextAlignment="Center" FontSize="20px">Passwort</Label>
+            <PasswordBox x:Name="Passworttextbox" Grid.Row="10" Width="500px" FontSize="20px" TextBlock.TextAlignment="Left"></PasswordBox>
+            <Label x:Name="Passwortwdhlabel" Grid.Row="12" TextBlock.TextAlignment="Center" FontSize="20px">Passwort wiederholen</Label>
+            <PasswordBox x:Name="Passwortwdhtextbox" Grid.Row="12" Width="500px" FontSize="20px" TextBlock.TextAlignment="Left"></PasswordBox>
+            
+            <Label x:Name="Musiklabel" Grid.Row="14" TextBlock.TextAlignment="Center" FontSize="20px">Musikgenre</Label>
+            <CheckBox x:Name="checkboxreggae" Grid.Row="16">Reggae
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <CheckBox x:Name="checkboxklassik" Grid.Row="16" Margin="140px,0,0,0">Klassik
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <CheckBox x:Name="checkboxpop" Grid.Row="16" Margin="280px,0,0,0">Pop
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <CheckBox x:Name="checkboxpunk" Grid.Row="16" Margin="400px,0,0,0">Punk
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <CheckBox x:Name="checkboxhiphop" Grid.Row="16" Margin="530px,0,0,0">Hip Hop
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <CheckBox x:Name="checkboxhouse" Grid.Row="18" Margin="0,0,0,0">House
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <CheckBox x:Name="checkboxrock" Grid.Row="18" Margin="140,0,0,0">Rock
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <CheckBox x:Name="checkboxmetall" Grid.Row="18" Margin="280,0,0,0">Metall
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <CheckBox x:Name="checkboxjazz" Grid.Row="18" Margin="400,0,0,0">Jazz
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <CheckBox x:Name="checkboxelectro" Grid.Row="18" Margin="530,0,0,0">Electro
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <Label x:Name="Kinectkamera" Grid.Row="20" Grid.Column="0" TextBlock.TextAlignment="Center" FontSize="20px">Kinectkamera</Label>
+            <Viewbox Grid.Row="22" HorizontalAlignment="Center">
+                <Image Source="{Binding kinectImageSource}"  />
+            </Viewbox>
+            <Label x:Name="Bild" Grid.Row="24" Grid.Column="0" TextBlock.TextAlignment="Center" FontSize="20px">Bild</Label>
+            <Button x:Name="MakeaPicture" Content="Gesicht aufnehmen" Grid.Row="27"  HorizontalAlignment="Left" TextBlock.TextAlignment="Center" FontSize="30px" Click="faceImage_Click" />
+            <Viewbox Grid.Row="25" HorizontalAlignment="Left" Height="400px" Width="400px">
+                <Image x:Name="FaceImageXAML" />
+            </Viewbox>
+
+            <Button x:Name="Savebtn" Content="Registrieren" Grid.Row="29"  HorizontalAlignment="Center" TextBlock.TextAlignment="Center" FontSize="50px" Click="saveUser_Click"/>
+
+
+        </Grid>
+    </ScrollViewer>
+</Window>
