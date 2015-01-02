@@ -21,7 +21,7 @@
         Sie können sich entweder über das <Hyperlink NavigateUri=" http://www.frmc.wi-stuttgart.de" RequestNavigate="Hyperlink_RequestNavigate"> Onlineportal</Hyperlink> registrieren oder Sie betätigen den Registrierungsbutton für den Registrierungsprozess. 
         </TextBlock>
         <Button Grid.Row="5" Content="Registration" FontSize="40px" Height="80px" Width="400px" Click="navigateBtn_Click"></Button>
-        <Button Grid.Row="7" Content="Weiter zum MC" FontSize="40px" Height="80px" Width="400px"></Button>
+        <Button Grid.Row="7" Content="Weiter zum MC" FontSize="40px" Height="80px" Width="400px" Click="navigateBtnMC_Click"></Button>
         
         
         

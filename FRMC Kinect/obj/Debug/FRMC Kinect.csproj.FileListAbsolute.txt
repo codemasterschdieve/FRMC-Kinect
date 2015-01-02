@@ -28,3 +28,7 @@ C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kin
 C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\WriteableBitmapEx.Wpf.dll
 C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\WriteableBitmapEx.Wpf.pdb
 C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\WriteableBitmapEx.Wpf.xml
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\FRMC_Window.baml
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\obj\Debug\FRMC_Window.g.cs
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\wrapper.dll
+C:\Users\Stefan\HdM\WS_2014_15\Kooperation\Kinect_Workbench\FRMC Kinect\FRMC Kinect\bin\Debug\wrapper.pdb

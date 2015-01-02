@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
-using System.Windows.Navigation;
+
 
 namespace FRMC_Kinect
 {
@@ -39,6 +39,13 @@ namespace FRMC_Kinect
             var newwindow = new Register(); //create your new form.
             newwindow.Show(); //show the new form.
             this.Close(); //only if you want to close the current form.
+        }
+
+        private void navigateBtnMC_Click(object sender, RoutedEventArgs e)
+        {
+            var newwindow = new FRMC_Window();
+            newwindow.Show();
+            this.Close();
         }
 
     }

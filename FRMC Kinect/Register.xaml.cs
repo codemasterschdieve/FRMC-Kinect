@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -639,11 +640,17 @@ namespace FRMC_Kinect
             return connStr;
         }
 
+        //
 
+
+
+
+
+        //
 
         private void saveUser_Click(object sender, RoutedEventArgs e)
         {
-            if (Firstnametextbox.Text.Length > 0 && Firstnametextbox.Text.Length <= 30 && Lastnametextbox.Text.Length > 0 && Lastnametextbox.Text.Length <= 30 && imagedata != null && Passworttextbox.Password.Length >0 && Passworttextbox.Password.Length <=30 && Passworttextbox.Password == Passwortwdhtextbox.Password && Emailtextbox.Text.Length >0 && Emailtextbox.Text.Length <= 30)
+            if (Firstnametextbox.Text.Length > 0 && Firstnametextbox.Text.Length <= 30 && Lastnametextbox.Text.Length > 0 && Lastnametextbox.Text.Length <= 30 && imagedata != null && Passworttextbox.Password.Length >0 && Passworttextbox.Password.Length <=30 && Passworttextbox.Password == Passwortwdhtextbox.Password && Emailtextbox.Text.Length >0 && Emailtextbox.Text.Length <= 30 && Regex.IsMatch(Emailtextbox.Text,@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
             {
 
                 try
@@ -660,14 +667,123 @@ namespace FRMC_Kinect
                     connection.Open();
 
                     MySqlCommand cmd = connection.CreateCommand();
+
+
+
+                    cmd.CommandText = "SELECT Email FROM User WHERE Email='" + Emailtextbox.Text + "'";
+                    cmd.Prepare();
+                    cmd.ExecuteNonQuery();
+                    var foundemail = cmd.ExecuteScalar();
+                    if (foundemail != null)
+                    {
+
+                        MessageBox.Show("Die Emailadresse wird bereits verwendet. Bitte verwenden Sie eine andere");
+                        return;
+                    }
+
+
+
+
                     cmd.CommandText = "INSERT INTO User(Firstname,Lastname,Picture,Picturetype,Passwort,Email) VALUES('" + Firstnametextbox.Text + "','" + Lastnametextbox.Text + "','"+imagedata+"','png','" +Passworttextbox.Password+"','"+Emailtextbox.Text+"') ";
                     // MySqlCommand cmd = new MySqlCommand("INSERT INTO User(Firstname,Lastname) VALUES(" + Firstnametextbox.Text + "," + Lastnametextbox.Text + ") ");
                     cmd.Prepare();
                     cmd.ExecuteNonQuery();
                     MessageBox.Show("Daten wurden erfolgreich gespeichert");
 
-                    //close the connection
-                    connection.Close();
+
+                    var reggae = 1;
+                    var klassik = 2;
+                    var pop = 3;
+                    var punk = 4;
+                    var hiphop = 5;
+                    var house = 6;
+                    var rock = 7;
+                    var metall = 8;
+                    var jazz = 9;
+                    var electro = 10;
+
+                    
+
+                    cmd.CommandText ="SELECT UserId FROM User WHERE Email='"+Emailtextbox.Text+"'";
+                    cmd.Prepare();
+                    var userid= cmd.ExecuteScalar();
+
+
+                    if (checkboxreggae.IsChecked.Value)
+                    {
+                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + reggae + "') ";
+                        cmd.Prepare();
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    if (checkboxklassik.IsChecked.Value)
+                    {
+                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + klassik + "') ";
+                        cmd.Prepare();
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    if (checkboxpop.IsChecked.Value)
+                    {
+                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + pop + "') ";
+                        cmd.Prepare();
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    if (checkboxpunk.IsChecked.Value)
+                    {
+                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + punk + "') ";
+                        cmd.Prepare();
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    if (checkboxhiphop.IsChecked.Value)
+                    {
+                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + hiphop + "') ";
+                        cmd.Prepare();
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    if (checkboxhouse.IsChecked.Value)
+                    {
+                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + house + "') ";
+                        cmd.Prepare();
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    if (checkboxrock.IsChecked.Value)
+                    {
+                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + rock + "') ";
+                        cmd.Prepare();
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    if (checkboxmetall.IsChecked.Value)
+                    {
+                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + metall + "') ";
+                        cmd.Prepare();
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    if (checkboxjazz.IsChecked.Value)
+                    {
+                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + jazz + "') ";
+                        cmd.Prepare();
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    if (checkboxelectro.IsChecked.Value)
+                    {
+                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + electro + "') ";
+                        cmd.Prepare();
+                        cmd.ExecuteNonQuery();
+                    }
+
+
+                 //close the connection
+                 connection.Close();
+
+
                 }
                 catch (MySqlException ex)
                 {
@@ -712,6 +828,11 @@ namespace FRMC_Kinect
                              //        createPopup("Meldung", 200, 500, "In dem Feld Email dürfen nicht mehr als 30 Zeichen sein");
                                      MessageBox.Show("In dem Feld Email dürfen nicht mehr als 30 Zeichen sein");
                                     }
+                                        else
+                                        if(!Regex.IsMatch(Emailtextbox.Text,@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
+                                        {
+                                            MessageBox.Show("Bitte geben Sie eine gültige Emailadresse an");
+                                        }
                                     else
                                         if (Passworttextbox.Password.Length == 0)
                                         {

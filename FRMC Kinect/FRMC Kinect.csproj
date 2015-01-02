@@ -54,6 +54,10 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="wrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Desktop\KeyLemonAPI\wrapper\obj\Debug\wrapper.dll</HintPath>
+    </Reference>
     <Reference Include="WriteableBitmapEx.Wpf">
       <HintPath>..\..\..\..\..\..\Desktop\Entwicklung\Entwicklungstools\WriteableBitmapEx_v1.0.14.0\WPF\WriteableBitmapEx.Wpf.dll</HintPath>
     </Reference>
@@ -63,9 +67,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FRMC_Window.xaml.cs">
+      <DependentUpon>FRMC_Window.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Register.xaml.cs">
       <DependentUpon>Register.xaml</DependentUpon>
     </Compile>
+    <Page Include="FRMC_Window.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
