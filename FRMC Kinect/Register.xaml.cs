@@ -164,6 +164,18 @@ namespace FRMC_Kinect
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// KeyLemon Instance
+        /// </summary>
+
+        KeyLemon klemon = new KeyLemon();
+
+        /// <summary>
+        /// filename
+        /// </summary>
+
+        string filename;
+
         #endregion
 
 
@@ -461,16 +473,14 @@ namespace FRMC_Kinect
 
                            this.faceBitmap = bodyBitmap.Crop(new Rect(x, y, bitmapsize, bitmapsize));
                            this.bodyBitmap.DrawRectangle(x,y,(int)bitmapsize+x,(int)bitmapsize+y,Colors.Red);
-                          
-
-                           
-                            
-
-                          
 
 
-                           //string filename = "C:\\Users\\Stefan\\HdM\\WS_2014_15\\Gesicht.png";
-                           //CreateThumbnail(filename, faceBitmap);
+
+
+
+
+
+
 
 
 
@@ -507,21 +517,28 @@ namespace FRMC_Kinect
 
         private void faceImage_Click(object sender, RoutedEventArgs e)
         {
+
+            try { 
             
             faceImage =ConvertWriteableBitmapToBitmapImage(faceBitmap);
             System.Diagnostics.Debug.WriteLine("Der Datentyp des faceImages ist:  "+faceImage.GetType());
             var binding = new Binding { Source=faceImage};
             FaceImageXAML.SetBinding(Image.SourceProperty, binding);
 
+
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(faceBitmap));
             using (MemoryStream stream = new MemoryStream())
             {
-                PngBitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(faceImage));
+                
                 encoder.Save(stream);
                 imagedata= stream.ToArray();
             }
+            }
             
-            
+            catch(Exception ex) {
+             MessageBox.Show(ex.StackTrace);
+            }
 
         }
 
@@ -688,8 +705,19 @@ namespace FRMC_Kinect
                     // MySqlCommand cmd = new MySqlCommand("INSERT INTO User(Firstname,Lastname) VALUES(" + Firstnametextbox.Text + "," + Lastnametextbox.Text + ") ");
                     cmd.Prepare();
                     cmd.ExecuteNonQuery();
-                    MessageBox.Show("Daten wurden erfolgreich gespeichert");
+                  
 
+                    cmd.CommandText = "SELECT UserId FROM User WHERE Email='" + Emailtextbox.Text + "'";
+
+                    cmd.Prepare();
+                    var userId = cmd.ExecuteScalar();
+
+                    filename = "C:\\Users\\Stefan\\HdM\\WS_2014_15\\" + userId.ToString() + "_gesicht.png";
+                    CreateThumbnail(filename, faceBitmap);
+
+                    string name = klemon.useLocalpictureformodelcreation(filename, userId.ToString());
+                    MessageBox.Show("Daten wurden erfolgreich gespeichert für: " + name);
+                    
 
                     var reggae = 1;
                     var klassik = 2;
@@ -862,7 +890,10 @@ namespace FRMC_Kinect
         }
         #endregion
 
-
+        public void Testkeylemon_Click(Object sender, RoutedEventArgs args)
+        {
+            klemon.testKeylemonconnection();
+        }
 
 
     }
