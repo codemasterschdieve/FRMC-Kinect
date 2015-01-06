@@ -171,6 +171,12 @@ namespace FRMC_Kinect
         KeyLemon klemon = new KeyLemon();
 
         /// <summary>
+        /// KeyLemon Instance
+        /// </summary>
+
+        ftp ftp = new ftp();
+
+        /// <summary>
         /// filename
         /// </summary>
 
@@ -892,7 +898,17 @@ namespace FRMC_Kinect
 
         public void Testkeylemon_Click(Object sender, RoutedEventArgs args)
         {
-            klemon.testKeylemonconnection();
+
+            //try
+            //{
+            ftp.bildupload();
+                //  klemon.testKeylemonconnection();
+            //}
+            //catch(Exception ex)
+            //{
+            //    MessageBox.Show(ex.StackTrace);
+            //    Console.WriteLine(ex.StackTrace);
+            //}
         }
 
 
