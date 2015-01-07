@@ -72,6 +72,7 @@
     <Compile Include="FRMC_Window.xaml.cs">
       <DependentUpon>FRMC_Window.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Ftp.cs" />
     <Compile Include="KeyLemon.cs" />
     <Compile Include="Register.xaml.cs">
       <DependentUpon>Register.xaml</DependentUpon>
