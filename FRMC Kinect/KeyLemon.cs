@@ -13,67 +13,89 @@ namespace FRMC_Kinect
     {
 
         KLAPI api = new KLAPI("Tobi0604", "qUDuBnzvYCJsxcDD4nnyHWCtiHbwU7rmGxHdh8RXbcOjN24m2TJcDI", "https://api.keylemon.com");
+
         dynamic response;
 
 
-
-        public void testKeylemonconnection()
+        public void testKeylemonconnection(string userId, string email)
         {
 
-            // Images can be give as public URLs. When there's more than
-            // one URL: concatenate as a comma separated string into a
-            // single parameter.
-            String[] image_url = new String[1] { "http://www.keylemon.com/images/saas/group.jpg" };
-
-            dynamic response = api.DetectFaces(image_url, null);
-
-            Console.WriteLine("Face id  : {0}", response["faces"][0]["face_id"]);
-            Console.WriteLine("Position : {0} {1}", response["faces"][0]["x"], response["faces"][0]["y"]);
-            Console.WriteLine("Size     : {0} {1}", response["faces"][0]["h"], response["faces"][0]["w"]);
-        }
+            
 
 
-        public string useLocalpictureformodelcreation(string filename, string User_Id)
-        {
+            // We can train using URLs of images
+            String[] penelope_urls = new String[1]{
+            "http://www.frmc.wi-stuttgart.de/scan/" + userId + "model.jpg" };
 
-
-            // Or data of images from a local storage
-            byte[] imageData = File.ReadAllBytes(filename);
- 
-
-
-            //String[] face_list = new String[response["faces"].Length];
-            //// Maybe detect found more than on face in the image, group them
-            //for (int i =0; i < response ["faces"].Length; i++){
-            //    face_list[i] = response ["faces"] [i] ["face_id"];
-            //}
-            byte[][] byteImage = new byte[1][] { imageData };
- 
             // Create a model using the URLs, the data and the face_list
             //response = api.CreateFaceModel(null, byteImage[1][0] , null, User_Id);
             try
             {
-                response = api.CreateFaceModel(null, byteImage, null, User_Id); 
+                response = api.CreateFaceModel(penelope_urls, null, null,  userId + "_" + email);
             }
-            catch (Exception ex){
+            catch (Exception ex)
+            {
                 MessageBox.Show(ex.StackTrace);
             }
-            
- 
+
+
             // To read back the model at a later time:
-            response = api.GetModel(response["model_id"]);
- 
+            //  response = api.GetModel(response ["model_id"]);
+
             // And delete the model:
-       //     response = api.DeleteModel(response ["model_id"]);
+            //   response = api.DeleteModel(response ["model_id"]);
 
             dynamic result_for_face_1 = response["faces"][0]["results"][0];
 
-            string name = result_for_face_1["name"];
+            MessageBox.Show(result_for_face_1["name"]);
 
+         
 
-            return name;
 
         }
+
+
+       // public string useLocalpictureformodelcreation(string filename, string User_Id)
+       // {
+
+
+       //     // Or data of images from a local storage
+       //     byte[] imageData = File.ReadAllBytes(filename);
+ 
+
+
+       //     //String[] face_list = new String[response["faces"].Length];
+       //     //// Maybe detect found more than on face in the image, group them
+       //     //for (int i =0; i < response ["faces"].Length; i++){
+       //     //    face_list[i] = response ["faces"] [i] ["face_id"];
+       //     //}
+       //     byte[][] byteImage = new byte[1][] { imageData };
+ 
+       //     // Create a model using the URLs, the data and the face_list
+       //     //response = api.CreateFaceModel(null, byteImage[1][0] , null, User_Id);
+       //     try
+       //     {
+       //     dynamic response = api.CreateFaceModel(null, byteImage, null, User_Id); 
+       //     }
+       //     catch (Exception ex){
+       //         MessageBox.Show(ex.StackTrace);
+       //     }
+            
+ 
+       //     // To read back the model at a later time:
+       //     dynamic response2 = api.GetModel(response["model_id"]);
+ 
+       //     // And delete the model:
+       ////     response = api.DeleteModel(response ["model_id"]);
+
+       //     dynamic result_for_face_1 = response2["faces"][0]["results"][0];
+
+       //     string name = result_for_face_1["name"];
+
+
+       //     return name;
+
+       // }
 
 
 
@@ -96,10 +118,10 @@ namespace FRMC_Kinect
             // here, we're doing 1 image against 1 model but it's
             // possible to do n images against n models.
 
-            string[] my_image_to_test = new string[] {LiveScanPicturePath};
+            string[] my_image_to_test = new string[] { "http://www.frmc.wi-stuttgart.de/scan.jpg" };
 
 
-           response = api.RecognizeFace(model_id, my_image_to_test, null, null);
+         dynamic response = api.RecognizeFace(model_id, my_image_to_test, null, null);
 
             dynamic result_for_face_1 = response["faces"][0]["results"][0];
 
