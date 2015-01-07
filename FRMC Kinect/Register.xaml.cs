@@ -174,13 +174,18 @@ namespace FRMC_Kinect
         /// KeyLemon Instance
         /// </summary>
 
-        ftp ftp = new ftp();
+        Ftp ftpup = new Ftp();
 
         /// <summary>
         /// filename
         /// </summary>
 
         string filename;
+        string UserIdGlobal;
+
+
+
+
 
         #endregion
 
@@ -465,7 +470,7 @@ namespace FRMC_Kinect
                             double T = Math.Tan((Math.PI * 180) / hFov);
                             double pixelWidth = T * depth;
 
-                            double bitmapsize = 500 / (pixelWidth / numPixels);
+                            double bitmapsize = 1000 / (pixelWidth / numPixels);
 
                             int x = (int)(Math.Floor(colorSpacePoint.X + 0.5) - (bitmapsize / 2));
                             int y = (int)(Math.Floor(colorSpacePoint.Y + 0.5) - (bitmapsize / 2));
@@ -580,7 +585,7 @@ namespace FRMC_Kinect
             {
                 using (FileStream stream = new FileStream(filename, FileMode.Create))
                 {
-                    PngBitmapEncoder encoder = new PngBitmapEncoder();
+                    JpegBitmapEncoder encoder = new JpegBitmapEncoder();
                     encoder.Frames.Add(BitmapFrame.Create(image));
                     encoder.Save(stream);
                     stream.Close();
@@ -707,7 +712,7 @@ namespace FRMC_Kinect
 
 
 
-                    cmd.CommandText = "INSERT INTO User(Firstname,Lastname,Picture,Picturetype,Passwort,Email) VALUES('" + Firstnametextbox.Text + "','" + Lastnametextbox.Text + "','"+imagedata+"','png','" +Passworttextbox.Password+"','"+Emailtextbox.Text+"') ";
+                    cmd.CommandText = "INSERT INTO User(Firstname,Lastname,Picture,Picturetype,Passwort,Email) VALUES('" + Firstnametextbox.Text + "','" + Lastnametextbox.Text + "','"+imagedata+"','jpg','" +Passworttextbox.Password+"','"+Emailtextbox.Text+"') ";
                     // MySqlCommand cmd = new MySqlCommand("INSERT INTO User(Firstname,Lastname) VALUES(" + Firstnametextbox.Text + "," + Lastnametextbox.Text + ") ");
                     cmd.Prepare();
                     cmd.ExecuteNonQuery();
@@ -717,12 +722,13 @@ namespace FRMC_Kinect
 
                     cmd.Prepare();
                     var userId = cmd.ExecuteScalar();
+                    UserIdGlobal = userId.ToString();
 
-                    filename = "C:\\Users\\Stefan\\HdM\\WS_2014_15\\" + userId.ToString() + "_gesicht.png";
+                    filename = "C:\\Kinect" + userId.ToString() + "_gesicht.jpg";
                     CreateThumbnail(filename, faceBitmap);
 
-                    string name = klemon.useLocalpictureformodelcreation(filename, userId.ToString());
-                    MessageBox.Show("Daten wurden erfolgreich gespeichert für: " + name);
+              //      string name = klemon.useLocalpictureformodelcreation(filename, userId.ToString());
+                //    MessageBox.Show("Daten wurden erfolgreich gespeichert für: " + name);
                     
 
                     var reggae = 1;
@@ -892,23 +898,21 @@ namespace FRMC_Kinect
                                                     MessageBox.Show("Es ist kein Bild vorhanden");
                                                 }
 
+                
+
+
             }
         }
         #endregion
-
+        
         public void Testkeylemon_Click(Object sender, RoutedEventArgs args)
         {
+            
+        
+         
+            ftpup.modelupload(UserIdGlobal, filename);
+            klemon.testKeylemonconnection(UserIdGlobal, Emailtextbox.Text);
 
-            //try
-            //{
-            ftp.bildupload();
-                //  klemon.testKeylemonconnection();
-            //}
-            //catch(Exception ex)
-            //{
-            //    MessageBox.Show(ex.StackTrace);
-            //    Console.WriteLine(ex.StackTrace);
-            //}
         }
 
 
