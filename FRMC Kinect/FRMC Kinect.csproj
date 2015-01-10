@@ -74,7 +74,10 @@
       <DependentUpon>FRMC_Window.xaml</DependentUpon>
     </Compile>
     <Compile Include="Ftp.cs" />
+    <Compile Include="GenreFinder.cs" />
+    <Compile Include="GestureCommands.cs" />
     <Compile Include="KeyLemon.cs" />
+    <Compile Include="MediaPlayerController.cs" />
     <Compile Include="MySqlController.cs" />
     <Compile Include="Register.xaml.cs">
       <DependentUpon>Register.xaml</DependentUpon>
@@ -136,6 +139,17 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Logo_3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

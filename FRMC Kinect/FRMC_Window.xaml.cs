@@ -31,9 +31,11 @@ namespace FRMC_Kinect
 {
  
     public partial class FRMC_Window : Window, INotifyPropertyChanged
+       
+
     {
 
-     
+     MySqlController mySqlController = new MySqlController();
        
 
 
@@ -151,6 +153,9 @@ namespace FRMC_Kinect
         /// </summary>
         private Byte[] imagedata = null;
 
+        //Stellte Gesten Commands für den MediaPlayer zu verfügung
+        private GestureCommands gestureCommands = new GestureCommands();
+
 
         public ImageSource kinectImageSource
         {
@@ -218,57 +223,7 @@ namespace FRMC_Kinect
      //       response = api.DeleteModel(response["model_id"]);
 
 
-            // get the kinectSensor object
-            this.kinectSensor = KinectSensor.GetDefault();
-
-
-            // open the reader for the color frames
-            this.colorFrameReader = this.kinectSensor.ColorFrameSource.OpenReader();
-
-            // get colorFrameDescription
-            this.colorFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
-
-
-            // open the reader for the depth frames
-            this.depthFrameReader = this.kinectSensor.DepthFrameSource.OpenReader();
-
-            // get depthFrameDescription
-            this.depthFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
-
-
-            // open the reader for the body index frames
-            this.bodyIndexFrameReader = this.kinectSensor.BodyIndexFrameSource.OpenReader();
-
-            // get bodyIndexFrameDescription
-            this.bodyIndexFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
-
-
-            // open the reader for the multispouce frames
-            this.multiFrameSourceReader = this.kinectSensor.OpenMultiSourceFrameReader(FrameSourceTypes.Depth | FrameSourceTypes.Color | FrameSourceTypes.BodyIndex | FrameSourceTypes.Body);
-
-
-            // create the colorFrameDescription from the ColorFrameSource using Bgra format
-            FrameDescription colorFrameDescriptionBgra = this.kinectSensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra);
-
-            // create faceBitmap
-            this.faceBitmap = new WriteableBitmap(colorFrameDescriptionBgra.Width, colorFrameDescriptionBgra.Height, 96.0, 96.0, PixelFormats.Bgra32, null);
-
-            // create bodyBitmap
-            this.bodyBitmap = new WriteableBitmap(colorFrameDescriptionBgra.Width, colorFrameDescriptionBgra.Height, 96.0, 96.0, PixelFormats.Bgra32, null);
-
-            // get coordinate mapper
-            this.coordinateMapper = this.kinectSensor.CoordinateMapper;
-
-            //// Handler for frame arrival
-           this.colorFrameReader.FrameArrived += this.Reader_ColorFrameArrived;
-            //this.multiFrameSourceReader.MultiSourceFrameArrived += this.Reader_FrameArrived;
-
-
-            // open the sensor
-            this.kinectSensor.Open();
-
-            // use the window object as the view model in this simple example
-            this.DataContext = this;
+           
 
 
 
@@ -374,6 +329,177 @@ namespace FRMC_Kinect
             newwindow.Show();
             this.Close();
         }
+
+
+        void DataWindow_Closing(object sender, CancelEventArgs e)
+        {
+            mySqlController.closeConnection();
+  
+        }
+
+        void DataWindow_Open(object sender, RoutedEventArgs e)
+        {
+
+
+            // get the kinectSensor object
+            this.kinectSensor = KinectSensor.GetDefault();
+
+
+            // open the reader for the color frames
+            this.colorFrameReader = this.kinectSensor.ColorFrameSource.OpenReader();
+
+            // get colorFrameDescription
+            this.colorFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
+
+
+            // open the reader for the depth frames
+            this.depthFrameReader = this.kinectSensor.DepthFrameSource.OpenReader();
+
+            // get depthFrameDescription
+            this.depthFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
+
+
+            // open the reader for the body index frames
+            this.bodyIndexFrameReader = this.kinectSensor.BodyIndexFrameSource.OpenReader();
+
+            // get bodyIndexFrameDescription
+            this.bodyIndexFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
+
+
+            // open the reader for the multispouce frames
+            //Für GestureCommands
+            this.multiFrameSourceReader = this.kinectSensor.OpenMultiSourceFrameReader(FrameSourceTypes.Depth | FrameSourceTypes.Color | FrameSourceTypes.BodyIndex | FrameSourceTypes.Body);
+
+
+            // create the colorFrameDescription from the ColorFrameSource using Bgra format
+            FrameDescription colorFrameDescriptionBgra = this.kinectSensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra);
+
+            // create faceBitmap
+            this.faceBitmap = new WriteableBitmap(colorFrameDescriptionBgra.Width, colorFrameDescriptionBgra.Height, 96.0, 96.0, PixelFormats.Bgra32, null);
+
+            // create bodyBitmap
+            this.bodyBitmap = new WriteableBitmap(colorFrameDescriptionBgra.Width, colorFrameDescriptionBgra.Height, 96.0, 96.0, PixelFormats.Bgra32, null);
+
+            // get coordinate mapper
+            this.coordinateMapper = this.kinectSensor.CoordinateMapper;
+
+            //// Handler for frame arrival
+            this.colorFrameReader.FrameArrived += this.Reader_ColorFrameArrived;
+            this.multiFrameSourceReader.MultiSourceFrameArrived += Reader_MultiSourceFrameArrived;
+            //this.multiFrameSourceReader.MultiSourceFrameArrived += this.Reader_FrameArrived;
+
+
+            // open the sensor
+            this.kinectSensor.Open();
+
+            // use the window object as the view model in this simple example
+            this.DataContext = this;
+
+
+
+        }
+
+
+        /// <summary>
+        /// Für GestureCommands
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void Reader_MultiSourceFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
+        {
+            var reference = e.FrameReference.AcquireFrame();
+
+
+            // Body
+            using (var frame = reference.BodyFrameReference.AcquireFrame())
+            {
+                if (frame != null)
+                {
+
+
+                    bodies = new Body[frame.BodyFrameSource.BodyCount];
+
+                    frame.GetAndRefreshBodyData(bodies);
+
+                    foreach (var body in bodies)
+                    {
+                        if (body != null)
+                        {
+                            if (body.IsTracked)
+                            {
+                                // Find the joints
+                                Joint handRight = body.Joints[JointType.HandRight];
+                                Joint thumbRight = body.Joints[JointType.ThumbRight];
+
+                                Joint handLeft = body.Joints[JointType.HandLeft];
+                                Joint thumbLeft = body.Joints[JointType.ThumbLeft];                                
+
+                                // Find the hand states
+                                string rightHandState = "-";
+                                string leftHandState = "-";
+
+                                switch (body.HandRightState)
+                                {
+                                    case HandState.Open:
+                                        rightHandState = "Open";
+                                        break;
+                                    case HandState.Closed:
+                                        rightHandState = "Closed";
+                                        break;
+                                    case HandState.Lasso:
+                                        rightHandState = "Lasso";
+                                        break;
+                                    case HandState.Unknown:
+                                        rightHandState = "Unknown...";
+                                        break;
+                                    case HandState.NotTracked:
+                                        rightHandState = "Not tracked";
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                switch (body.HandLeftState)
+                                {
+                                    case HandState.Open:
+                                        leftHandState = "Open";
+                                        break;
+                                    case HandState.Closed:
+                                        leftHandState = "Closed";
+                                        break;
+                                    case HandState.Lasso:
+                                        leftHandState = "Lasso";
+                                        break;
+                                    case HandState.Unknown:
+                                        leftHandState = "Unknown...";
+                                        break;
+                                    case HandState.NotTracked:
+                                        leftHandState = "Not tracked";
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                //tblRightHandState.Text = rightHandState;
+                                //tblLeftHandState.Text = leftHandState;
+
+                                try
+                                {
+                                    gestureCommands.InitializeMediaPlayerActions(rightHandState);
+                                } catch(Exception ex) {
+                                    MessageBox.Show(ex.Message);
+                                    System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+                                }
+                                
+                                //gestureCommands.LogArea = logArea;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        
 
     }
         
