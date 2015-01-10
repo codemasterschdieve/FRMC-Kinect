@@ -65,7 +65,7 @@ namespace FRMC_Kinect
 
         public void StartPlayer()
         {
-            PlayFile(@"‪C:\Kinect\test.mp3");
+            PlayFile(@"C:\Kinect\test.mp3");
         }
 
         public void Pause()
@@ -88,7 +88,7 @@ namespace FRMC_Kinect
             Player.controls.fastForward();
         }
 
-        public void Playlist(string genre)
+        public void PlayGenrePlaylist(string genre)
         {
             //IWMPPlaylistArray myPlaylist = Player.playlistCollection.getByName("Kinect");
             IWMPPlaylist pl = Player.mediaCollection.getByGenre(genre);
