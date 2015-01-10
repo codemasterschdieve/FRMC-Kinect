@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Media Control" TextBlock.TextAlignment="Center" Height="800" Width="1400">
 
+    
     <StackPanel>
-        
+       
          <Image Source="Images\Logo_3.png" Name="FRMCKinectLogo" Height="200px"/>
         <Line Stroke="Black" Stretch="Fill" X2="1" Margin="0,20px,0,20px"/>
         <Grid>
@@ -12,74 +13,79 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="NavigateMainwindow" Content="Zur Startseite"   TextBlock.TextAlignment="Center" FontSize="50px" Margin="155,0,0,0" Grid.Column="0"/>
-            <Button x:Name="NavigateRegister"  Content="Zur Registration"  TextBlock.TextAlignment="Center" FontSize="50px" Margin="400px,0,155,-0.333" Grid.Column="1"/>
+            <Button x:Name="NavigateMainwindow" Content="Zur Startseite"   TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="155,0,0,0" Grid.Column="0" Click="navigateBtnMainWindow_Click"/>
+            <Button x:Name="NavigateRegister"  Content="Zur Registration"  TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="400px,0,155,-0.333" Grid.Column="1" Click="navigateBtnRegister_Click"/>
             
 
         </Grid>
-       
+        <Line Stroke="Black" Stretch="Fill" X2="1" Margin="0,20px,0,20px"/>
+
+
+
 
 
         
-    
-    
     <ScrollViewer>
-        
+            
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="20px"/>
-                <RowDefinition Height="20px"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="20px"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="20px"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="20px"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="20px"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="80px"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="40px"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="20px"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="60px"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="20px"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="60px"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <!--<Grid.ColumnDefinitions>
+                
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="20px"/>
+                        <RowDefinition Height="20px"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="20px"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="20px"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="20px"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="20px"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="80px"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="40px"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="20px"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="60px"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="20px"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="60px"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <!--<Grid.ColumnDefinitions>
             <ColumnDefinition Width="150px"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>-->
+
+
             
+
+                <Label x:Name="Kinectkamera" Grid.Row="20" Grid.Column="0" TextBlock.TextAlignment="Center" FontSize="20px">Kinectkamera</Label>
+                    <Viewbox Grid.Row="22" HorizontalAlignment="Center">
+                        <Image Source="{Binding kinectImageSource}"  />
+                    </Viewbox>
+
+
+
+
+               
+            </Grid>
            
-
-        
-            <Label x:Name="Kinectkamera" Grid.Row="20" Grid.Column="0" TextBlock.TextAlignment="Center" FontSize="20px">Kinectkamera</Label>
-            <Viewbox Grid.Row="22" HorizontalAlignment="Center">
-                <Image Source="{Binding kinectImageSource}"  />
-            </Viewbox>
-           
-
-           
-
-
-        </Grid>
-    </ScrollViewer>
+        </ScrollViewer>
+       
     </StackPanel>
+    
 </Window>
 

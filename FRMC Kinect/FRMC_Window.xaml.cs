@@ -360,6 +360,21 @@ namespace FRMC_Kinect
         }
         #endregion
 
+
+        private void navigateBtnMainWindow_Click(object sender, RoutedEventArgs e)
+        {
+            var newwindow = new MainWindow(); //create your new form.
+            newwindow.Show(); //show the new form.
+            this.Close(); //only if you want to close the current form.
+        }
+
+        private void navigateBtnRegister_Click(object sender, RoutedEventArgs e)
+        {
+            var newwindow = new Register();
+            newwindow.Show();
+            this.Close();
+        }
+
     }
         
 }   
