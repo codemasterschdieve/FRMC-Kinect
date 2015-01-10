@@ -7,17 +7,32 @@ using KeyLemon;
 using System.IO;
 using System.Windows;
 
+using MySql.Data.MySqlClient;
+
+
+
 namespace FRMC_Kinect
 {
     class KeyLemon
     {
 
+
+        MySqlController mySqlController = new MySqlController();
         KLAPI api = new KLAPI("Tobi0604", "qUDuBnzvYCJsxcDD4nnyHWCtiHbwU7rmGxHdh8RXbcOjN24m2TJcDI", "https://api.keylemon.com");
+        User user = new User();
+        List<int> erkannteModels = new List<int>();
+
+        public List<int> ErkannteModels
+        {
+            get { return erkannteModels; }
+            set { erkannteModels = value; }
+        }
 
         dynamic response;
+        dynamic response2;
+        dynamic responesModelId;
 
-
-        public void testKeylemonconnection(string userId, string email)
+        public void testKeylemonconnection(string userId, string vorname, string nachname)
         {
 
             
@@ -25,13 +40,13 @@ namespace FRMC_Kinect
 
             // We can train using URLs of images
             String[] penelope_urls = new String[1]{
-            "http://www.frmc.wi-stuttgart.de/scan/" + userId + "model.jpg" };
+            "http://www.frmc.wi-stuttgart.de/scan/"  + userId + "model.jpg" };
 
             // Create a model using the URLs, the data and the face_list
             //response = api.CreateFaceModel(null, byteImage[1][0] , null, User_Id);
             try
             {
-                response = api.CreateFaceModel(penelope_urls, null, null,  userId + "_" + email);
+             response = api.CreateFaceModel(penelope_urls, null, null, userId + "_" + vorname + nachname);
             }
             catch (Exception ex)
             {
@@ -40,14 +55,30 @@ namespace FRMC_Kinect
 
 
             // To read back the model at a later time:
-            //  response = api.GetModel(response ["model_id"]);
 
-            // And delete the model:
+
+        //    responesModelId = api.GetModel(response["model_id"]);
+            
+        //    user.ModelId = responesModelId["model_id"];
+         //   mySqlController.updateUser(user);
+            
+
+            //      MessageBox.Show(response["model_id"]);
+
+
+
+            //     And delete the model:
             //   response = api.DeleteModel(response ["model_id"]);
 
-            dynamic result_for_face_1 = response["faces"][0]["results"][0];
 
-            MessageBox.Show(result_for_face_1["name"]);
+
+
+
+
+
+        //    dynamic result_for_face_1 = response["faces"][0]["results"][0];
+
+       //     MessageBox.Show(result_for_face_1["name"]);
 
          
 
@@ -99,38 +130,60 @@ namespace FRMC_Kinect
 
 
 
-        public string RecognizeUserFace(string LiveScanPicturePath, int User_Id)
+        public void RecognizeUserFace()
         {
 
 
 
             //// First, let's train a model
             //// See the Model creation section for more details
-            //String[] penelope_urls = new String[2]{
-            //"http://www.keylemon.com/images/saas/penelope/Penelope_Cruz_1.jpg",
-            //"http://www.keylemon.com/images/saas/penelope/Penelope_Cruz_2.jpg" };
+       //   String[] penelope_urls = new String[2]{
+      //    "http://www.frmc.wi-stuttgart.de/scan/40model.jpg",
+      //   "http://www.frmc.wi-stuttgart.de/scan/39model.jpg" };
 
-            //dynamic response = api.CreateFaceModel(penelope_urls, null, null, null);
-
-            string model_id = "User_Id";
-
-            // Then to do a recognition test against this model:
-            // here, we're doing 1 image against 1 model but it's
-            // possible to do n images against n models.
-
-            string[] my_image_to_test = new string[] { "http://www.frmc.wi-stuttgart.de/scan.jpg" };
+        //   dynamic response2 = api.CreateFaceModel(penelope_urls, null, null, "test");
 
 
-         dynamic response = api.RecognizeFace(model_id, my_image_to_test, null, null);
+         
 
-            dynamic result_for_face_1 = response["faces"][0]["results"][0];
+           var model_ids = mySqlController.findAllModelIdFromDb(user);
+            
 
-            Console.WriteLine("Test of face {0} against model {1} has a score of {2}",
-                                 response["faces"][0]["face_id"],
-                                 result_for_face_1["model_id"],
-                                 result_for_face_1["score"]);
+            foreach(var modelid in model_ids)
+            {
 
-            return null;
+
+             
+                // Then to do a recognition test against this model:
+                // here, we're doing 1 image against 1 model but it's
+                // possible to do n images against n models.
+
+                string[] my_image_to_test = new string[] { "http://www.frmc.wi-stuttgart.de/scan/scan.jpg" };
+
+
+                response2 = api.RecognizeFace(modelid, my_image_to_test, null, null);
+
+                dynamic result_for_face_1 = response2["faces"][0]["results"][0];
+
+                Console.WriteLine("Test of face {0} against model {1} has a score of {2}",
+                                   response2["faces"][0]["face_id"],
+                                   result_for_face_1["model_id"],
+                                    result_for_face_1["score"]);
+
+
+                if ((result_for_face_1["score"]) >= 80){
+                erkannteModels.Add(result_for_face_1["model_id"]);
+
+                }
+
+
+            }
+
+           
+
+          
+
+          
 
         }
 

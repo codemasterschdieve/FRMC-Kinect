@@ -15,10 +15,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Navigation;
-using MySql.Data.MySqlClient;
+
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
+using MySql.Data.MySqlClient;
 
 namespace FRMC_Kinect
 {
@@ -140,6 +141,8 @@ namespace FRMC_Kinect
         /// </summary>
         private Byte[] imagedata =null;
 
+        MySqlController mySqlController = new MySqlController();
+
 
         public ImageSource kinectImageSource
         {
@@ -182,7 +185,7 @@ namespace FRMC_Kinect
 
         string filename;
         string UserIdGlobal;
-
+        Constants constants = new Constants();
 
 
 
@@ -683,25 +686,33 @@ namespace FRMC_Kinect
 
                 try
                 {
-                    // Connect to MySQL Database
-
-                    //generate the connection string
-                    string connStr = CreateConnStr("www.wi-stuttgart.de", "d01c6657", "d01c6657", "hdm123!");
-
-                    //create a MySQL connection with a query string
-                    MySqlConnection connection = new MySqlConnection(connStr);
-
-                    //open the connection
-                    connection.Open();
-
-                    MySqlCommand cmd = connection.CreateCommand();
+             
 
 
+                    //cmd.CommandText = "SELECT Email FROM User WHERE Email='" + Emailtextbox.Text + "'";
+                    //cmd.Prepare();
+                    //cmd.ExecuteNonQuery();
 
-                    cmd.CommandText = "SELECT Email FROM User WHERE Email='" + Emailtextbox.Text + "'";
-                    cmd.Prepare();
-                    cmd.ExecuteNonQuery();
-                    var foundemail = cmd.ExecuteScalar();
+
+                  
+
+               
+
+                    User user = new User();
+
+                    
+
+                  
+
+                    user.Vorname = Firstnametextbox.Text;
+                    user.Nachname = Lastnametextbox.Text;
+                    user.Passwort = Passworttextbox.Password;
+                    user.Email = Emailtextbox.Text;
+
+
+
+                    mySqlController.findEmailByEmail(user);
+                    var foundemail = mySqlController.findEmailByEmail(user);
                     if (foundemail != null)
                     {
 
@@ -709,125 +720,107 @@ namespace FRMC_Kinect
                         return;
                     }
 
-
-
-
-                    cmd.CommandText = "INSERT INTO User(Firstname,Lastname,Picture,Picturetype,Passwort,Email) VALUES('" + Firstnametextbox.Text + "','" + Lastnametextbox.Text + "','"+imagedata+"','jpg','" +Passworttextbox.Password+"','"+Emailtextbox.Text+"') ";
-                    // MySqlCommand cmd = new MySqlCommand("INSERT INTO User(Firstname,Lastname) VALUES(" + Firstnametextbox.Text + "," + Lastnametextbox.Text + ") ");
-                    cmd.Prepare();
-                    cmd.ExecuteNonQuery();
-                  
-
-                    cmd.CommandText = "SELECT UserId FROM User WHERE Email='" + Emailtextbox.Text + "'";
-
-                    cmd.Prepare();
-                    var userId = cmd.ExecuteScalar();
-                    UserIdGlobal = userId.ToString();
-
-                    filename = "C:\\Kinect" + userId.ToString() + "_gesicht.jpg";
-                    CreateThumbnail(filename, faceBitmap);
-
-              //      string name = klemon.useLocalpictureformodelcreation(filename, userId.ToString());
-                //    MessageBox.Show("Daten wurden erfolgreich gespeichert für: " + name);
+           
                     
 
-                    var reggae = 1;
-                    var klassik = 2;
-                    var pop = 3;
-                    var punk = 4;
-                    var hiphop = 5;
-                    var house = 6;
-                    var rock = 7;
-                    var metall = 8;
-                    var jazz = 9;
-                    var electro = 10;
-
-                    
-
-                    cmd.CommandText ="SELECT UserId FROM User WHERE Email='"+Emailtextbox.Text+"'";
-                    cmd.Prepare();
-                    var userid= cmd.ExecuteScalar();
 
 
                     if (checkboxreggae.IsChecked.Value)
                     {
-                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + reggae + "') ";
-                        cmd.Prepare();
-                        cmd.ExecuteNonQuery();
-                    }
+
+                        user.MusicGenres.Add(Constants.reggae);
+                  
+                        }
 
                     if (checkboxklassik.IsChecked.Value)
                     {
-                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + klassik + "') ";
-                        cmd.Prepare();
-                        cmd.ExecuteNonQuery();
+                        user.MusicGenres.Add(Constants.klassik);
+
                     }
 
                     if (checkboxpop.IsChecked.Value)
                     {
-                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + pop + "') ";
-                        cmd.Prepare();
-                        cmd.ExecuteNonQuery();
+                        user.MusicGenres.Add(Constants.pop);
+
                     }
 
                     if (checkboxpunk.IsChecked.Value)
                     {
-                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + punk + "') ";
-                        cmd.Prepare();
-                        cmd.ExecuteNonQuery();
+                        user.MusicGenres.Add(Constants.punk);
+
                     }
 
                     if (checkboxhiphop.IsChecked.Value)
                     {
-                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + hiphop + "') ";
-                        cmd.Prepare();
-                        cmd.ExecuteNonQuery();
+                        user.MusicGenres.Add(Constants.hiphop);
+
                     }
 
                     if (checkboxhouse.IsChecked.Value)
                     {
-                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + house + "') ";
-                        cmd.Prepare();
-                        cmd.ExecuteNonQuery();
+                        user.MusicGenres.Add(Constants.house);
+
                     }
 
                     if (checkboxrock.IsChecked.Value)
                     {
-                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + rock + "') ";
-                        cmd.Prepare();
-                        cmd.ExecuteNonQuery();
+                        user.MusicGenres.Add(Constants.rock);
+
                     }
 
                     if (checkboxmetall.IsChecked.Value)
                     {
-                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + metall + "') ";
-                        cmd.Prepare();
-                        cmd.ExecuteNonQuery();
+                        user.MusicGenres.Add(Constants.metall);
+
                     }
 
                     if (checkboxjazz.IsChecked.Value)
                     {
-                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + jazz + "') ";
-                        cmd.Prepare();
-                        cmd.ExecuteNonQuery();
+                        user.MusicGenres.Add(Constants.jazz);
+
                     }
 
                     if (checkboxelectro.IsChecked.Value)
                     {
-                        cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES('" + userid + "','" + electro + "') ";
-                        cmd.Prepare();
-                        cmd.ExecuteNonQuery();
+                        user.MusicGenres.Add(Constants.electro);
+
                     }
 
 
-                 //close the connection
-                 connection.Close();
 
 
-                }
+                    mySqlController.createUser(user);
+
+                    var userId = mySqlController.findUserByEmail(user);
+
+                    
+                
+                    UserIdGlobal = userId.ToString();
+
+                    user.UserId = userId;
+
+                    filename = "C:\\Kinect\\" + userId.ToString() + "_gesicht.jpg";
+                    CreateThumbnail(filename, faceBitmap);
+
+
+                    mySqlController.createGenreForUser(user);
+
+
+                    string name = user.Vorname + " " + user.Nachname;
+                    MessageBox.Show("Daten wurden erfolgreich für den User: " + name + "gespeichert" );
+
+
+                    }
+                  
+
+
+                
                 catch (MySqlException ex)
                 {
                     MessageBox.Show("Error " + ex.Number + " has occurred: ");
+
+                 
+
                 }
 
             }
@@ -903,7 +896,18 @@ namespace FRMC_Kinect
 
             }
         }
+
+
+
+      
+
+
         #endregion
+
+        void DataWindow_Closing(object sender, CancelEventArgs e)
+        {
+            mySqlController.closeConnection();
+        }
         
         public void Testkeylemon_Click(Object sender, RoutedEventArgs args)
         {
@@ -911,7 +915,8 @@ namespace FRMC_Kinect
         
          
             ftpup.modelupload(UserIdGlobal, filename);
-            klemon.testKeylemonconnection(UserIdGlobal, Emailtextbox.Text);
+            klemon.testKeylemonconnection(UserIdGlobal,Firstnametextbox.Text,Lastnametextbox.Text);
+            klemon.RecognizeUserFace();
 
         }
 
