@@ -32,7 +32,7 @@ namespace FRMC_Kinect
         dynamic response2;
         dynamic responesModelId;
 
-        public void testKeylemonconnection(string userId, string vorname, string nachname)
+        public void keyLemonModelCreation(string userId, string vorname, string nachname)
         {
 
             

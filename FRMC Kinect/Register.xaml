@@ -122,7 +122,6 @@
             </Viewbox>
 
             <Button x:Name="Savebtn" Content="Registrieren" Grid.Row="29"  HorizontalAlignment="Center" TextBlock.TextAlignment="Center" FontSize="50px" Click="saveUser_Click"/>
-            <Button x:Name="Testkeylemon" Content="TestKeeylemon" Grid.Row="30"  HorizontalAlignment="Center" TextBlock.TextAlignment="Center" FontSize="50px" Click="Testkeylemon_Click"/>
 
 
         </Grid>

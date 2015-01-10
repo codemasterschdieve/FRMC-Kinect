@@ -810,6 +810,12 @@ namespace FRMC_Kinect
                     MessageBox.Show("Daten wurden erfolgreich für den User: " + name + "gespeichert" );
 
 
+
+                    ftpup.modelupload(UserIdGlobal, filename);
+                    klemon.keyLemonModelCreation(UserIdGlobal, Firstnametextbox.Text, Lastnametextbox.Text);
+                    //klemon.RecognizeUserFace();
+
+
                     }
                   
 
@@ -909,17 +915,7 @@ namespace FRMC_Kinect
             mySqlController.closeConnection();
         }
         
-        public void Testkeylemon_Click(Object sender, RoutedEventArgs args)
-        {
-            
-        
-         
-            ftpup.modelupload(UserIdGlobal, filename);
-            klemon.testKeylemonconnection(UserIdGlobal,Firstnametextbox.Text,Lastnametextbox.Text);
-            klemon.RecognizeUserFace();
-
-        }
-
+  
 
     }
 }
