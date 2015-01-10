@@ -69,14 +69,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Constants.cs" />
     <Compile Include="FRMC_Window.xaml.cs">
       <DependentUpon>FRMC_Window.xaml</DependentUpon>
     </Compile>
     <Compile Include="Ftp.cs" />
     <Compile Include="KeyLemon.cs" />
+    <Compile Include="MySqlController.cs" />
     <Compile Include="Register.xaml.cs">
       <DependentUpon>Register.xaml</DependentUpon>
     </Compile>
+    <Compile Include="User.cs" />
     <Page Include="FRMC_Window.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
