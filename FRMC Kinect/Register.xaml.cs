@@ -793,8 +793,8 @@ namespace FRMC_Kinect
 
                     var userId = mySqlController.findUserByEmail(user);
 
-                    
-                
+
+                    int userId2 = userId;
                     UserIdGlobal = userId.ToString();
 
                     user.UserId = userId;
@@ -807,13 +807,13 @@ namespace FRMC_Kinect
 
 
                     string name = user.Vorname + " " + user.Nachname;
-                    MessageBox.Show("Daten wurden erfolgreich für den User: " + name + "gespeichert" );
+                    MessageBox.Show("Daten wurden erfolgreich für den User: " + name + " gespeichert." );
 
 
 
                     ftpup.modelupload(UserIdGlobal, filename);
-                    klemon.keyLemonModelCreation(UserIdGlobal, Firstnametextbox.Text, Lastnametextbox.Text);
-                    //klemon.RecognizeUserFace();
+                    klemon.keyLemonModelCreation(UserIdGlobal, Firstnametextbox.Text, Lastnametextbox.Text, userId2);
+                    klemon.RecognizeUserFace();
 
 
                     }

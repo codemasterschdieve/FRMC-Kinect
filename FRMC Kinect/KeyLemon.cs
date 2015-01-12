@@ -20,7 +20,7 @@ namespace FRMC_Kinect
         MySqlController mySqlController = new MySqlController();
         KLAPI api = new KLAPI("Tobi0604", "qUDuBnzvYCJsxcDD4nnyHWCtiHbwU7rmGxHdh8RXbcOjN24m2TJcDI", "https://api.keylemon.com");
         User user = new User();
-        List<int> erkannteModels = new List<int>();
+        List<string> erkannteModels = new List<string>();
 
         public List<int> ErkannteModels
         {
@@ -32,7 +32,7 @@ namespace FRMC_Kinect
         dynamic response2;
         dynamic responesModelId;
 
-        public void keyLemonModelCreation(string userId, string vorname, string nachname)
+        public void keyLemonModelCreation(string userId, string vorname, string nachname, int userId2)
         {
 
             
@@ -55,12 +55,12 @@ namespace FRMC_Kinect
 
 
             // To read back the model at a later time:
+            user.UserId = userId2;
 
-
-        //    responesModelId = api.GetModel(response["model_id"]);
+          responesModelId = api.GetModel(response["model_id"]);
             
-        //    user.ModelId = responesModelId["model_id"];
-         //   mySqlController.updateUser(user);
+          user.ModelId = responesModelId["model_id"];
+           mySqlController.updateUser(user);
             
 
             //      MessageBox.Show(response["model_id"]);
@@ -158,7 +158,7 @@ namespace FRMC_Kinect
                 // here, we're doing 1 image against 1 model but it's
                 // possible to do n images against n models.
 
-                string[] my_image_to_test = new string[] { "http://www.frmc.wi-stuttgart.de/scan/scan.jpg" };
+                string[] my_image_to_test = new string[] { "http://www.frmc.wi-stuttgart.de/scan/uploadscan.jpg" };
 
 
                 response2 = api.RecognizeFace(modelid, my_image_to_test, null, null);
@@ -171,7 +171,7 @@ namespace FRMC_Kinect
                                     result_for_face_1["score"]);
 
 
-                if ((result_for_face_1["score"]) >= 80){
+                if ((result_for_face_1["score"]) >= 5){
                 erkannteModels.Add(result_for_face_1["model_id"]);
 
                 }

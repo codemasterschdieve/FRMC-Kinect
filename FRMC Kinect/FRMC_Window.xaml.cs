@@ -23,6 +23,9 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Data;
 using System.Drawing;
+using System.Windows.Threading;
+
+
 
 
 
@@ -31,20 +34,22 @@ namespace FRMC_Kinect
 {
  
     public partial class FRMC_Window : Window, INotifyPropertyChanged
-       
-
     {
 
-     MySqlController mySqlController = new MySqlController();
-       
 
 
-     // api.CreateFaceModel
 
-        #region membervariablen definition
+
+        #region members
 
         /// <summary>
-        /// Active Kinect sensor
+        /// Instantiate mySqlController to get access to the remote mysql database
+        /// </summary>
+        MySqlController mySqlController = new MySqlController();
+       
+
+        /// <summary>
+        /// Instantiate active Kinect sensor
         /// </summary>
         private KinectSensor kinectSensor = null;
 
@@ -92,13 +97,13 @@ namespace FRMC_Kinect
 
 
         /// <summary>
-        /// Single Body Representation
+        /// Single body representation
         /// </summary>
         private Body body = null;
 
 
         /// <summary>
-        /// Array of Body Representations
+        /// Array of body representations
         /// </summary>
         private Body[] bodies = null;
 
@@ -127,7 +132,7 @@ namespace FRMC_Kinect
 
 
         /// <summary>
-        /// bytesPerPixel
+        /// Define bytesPerPixel
         /// </summary>
         private readonly int bytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
 
@@ -143,7 +148,7 @@ namespace FRMC_Kinect
         private WriteableBitmap faceBitmap = null;
 
         /// <summary>
-        /// FaceBitmap to display
+        /// FaceImage to display
         /// </summary>
         private BitmapImage faceImage = null;
 
@@ -154,9 +159,27 @@ namespace FRMC_Kinect
         private Byte[] imagedata = null;
 
         //Stellte Gesten Commands für den MediaPlayer zu verfügung
+        
+        /// <summary>
+        /// Instantiate gestureCommands to make the gesture commands for the media player available
+        /// </summary>
         private GestureCommands gestureCommands = new GestureCommands();
 
 
+        /// <summary>
+        /// Instantiate keylemon to get access to the keylemon api  
+        /// </summary>
+        KeyLemon klemon = new KeyLemon();
+
+        /// <summary>
+        /// Instantiate userList to save user objects
+        /// </summary>
+        List<object> userList = new List<object>();
+        
+
+        /// <summary>
+        /// Returns bodyBitmap as image source
+        /// </summary>
         public ImageSource kinectImageSource
         {
             get
@@ -165,6 +188,9 @@ namespace FRMC_Kinect
             }
         }
 
+        /// <summary>
+        /// Returns faceImage as image source
+        /// </summary>
         public ImageSource faceImageSource
         {
             get
@@ -173,6 +199,31 @@ namespace FRMC_Kinect
             }
         }
 
+
+        /// <summary>
+        /// Instantiate timer for exectue functions in time intervalls
+        /// </summary>
+        DispatcherTimer timer = new DispatcherTimer();
+
+        /// <summary>
+        /// Instantiate timer for exectue functions in time intervalls
+        /// </summary>
+        DispatcherTimer timerasync = new DispatcherTimer();
+
+        /// <summary>
+        /// Starting timer flag
+        /// </summary>
+        bool starttimer = true;
+
+        /// <summary>
+        /// Declare filename path
+        /// </summary>
+        string filename;
+
+        /// <summary>
+        /// Instantiate ftp object to get access to the ftp server functions
+        /// </summary>
+        Ftp ftpup2 = new Ftp();
 
 
         /// <summary>
@@ -184,7 +235,9 @@ namespace FRMC_Kinect
 
        
 
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public FRMC_Window()
         {
 
@@ -194,20 +247,20 @@ namespace FRMC_Kinect
              // Connect to MySQL Database
 
                     //generate the connection string
-                    string connStr = CreateConnStr("www.wi-stuttgart.de", "d01c6657", "d01c6657", "hdm123!");
+            //        string connStr = CreateConnStr("www.wi-stuttgart.de", "d01c6657", "d01c6657", "hdm123!");
 
-                    //create a MySQL connection with a query string
-                    MySqlConnection connection = new MySqlConnection(connStr);
+            //        //create a MySQL connection with a query string
+            //        MySqlConnection connection = new MySqlConnection(connStr);
 
-                    //open the connection
-                    connection.Open();
+            //        //open the connection
+            //        connection.Open();
 
-                    MySqlCommand cmd = connection.CreateCommand();
+            //        MySqlCommand cmd = connection.CreateCommand();
 
-            cmd.CommandText="SELECT Picture FROM User WHERE UserId='17'";
-            cmd.Prepare();
-            var imageData = cmd.ExecuteNonQuery();
-            System.Diagnostics.Debug.WriteLine("--> "+imageData.GetType());
+            //cmd.CommandText="SELECT Picture FROM User WHERE UserId='17'";
+            //cmd.Prepare();
+            //var imageData = cmd.ExecuteNonQuery();
+            //System.Diagnostics.Debug.WriteLine("--> "+imageData.GetType());
            
 
      //       KLAPI api = new KLAPI("tobi0604@me.com", "qwa1qwa1", "https://api.keylemon.com");
@@ -233,23 +286,23 @@ namespace FRMC_Kinect
 
 
         #region mysql connection
-        /// <summary>
-        /// Generates a connection string
-        /// </summary>
-        /// <param name="server">The name or IP of the server where the MySQL server is running</param>
-        /// <param name="databaseName">The name of the database </param>
-        /// <param name="user">The user id - root if there are no new users which have been created</param>
-        /// <param name="pass">The user's password</param>
-        /// <returns></returns>
-        public static string CreateConnStr(string server, string databaseName, string user, string pass)
-        {
-            //build the connection string
-            string connStr = "server=" + server + ";database=" + databaseName + ";uid=" +
-                user + ";password=" + pass + ";";
+        ///// <summary>
+        ///// Generates a connection string
+        ///// </summary>
+        ///// <param name="server">The name or IP of the server where the MySQL server is running</param>
+        ///// <param name="databaseName">The name of the database </param>
+        ///// <param name="user">The user id - root if there are no new users which have been created</param>
+        ///// <param name="pass">The user's password</param>
+        ///// <returns></returns>
+        //public static string CreateConnStr(string server, string databaseName, string user, string pass)
+        //{
+        //    //build the connection string
+        //    string connStr = "server=" + server + ";database=" + databaseName + ";uid=" +
+        //        user + ";password=" + pass + ";";
 
-            //return the connection string
-            return connStr;
-        }
+        //    //return the connection string
+        //    return connStr;
+        //}
         #endregion
 
        
@@ -290,32 +343,53 @@ namespace FRMC_Kinect
                     }
                 }
             }
+
+
+            filename = "C:\\Kinect\\scan.jpg";
+            CreateThumbnail2(filename, bodyBitmap);
+
+            if(starttimer)
+            {
+                timer.Tick += new EventHandler(executeTimer);
+                timer.Interval = new TimeSpan(0, 0, 7);
+                timer.Start();
+                timerasync.Tick += new EventHandler(exectuteTimerAsync);
+                timerasync.Interval = new TimeSpan(0, 0, 10);
+                timerasync.Start();
+                this.starttimer = false;
+            }
+
         }
         #endregion
 
 
         #region create thumbnail
-        /// <summary>
-        /// Saves the writable bitmap in the local file system
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="image"></param>
-        public void CreateThumbnail(string filename, BitmapSource image)
-        {
-            if (filename != string.Empty)
-            {
-                using (FileStream stream = new FileStream(filename, FileMode.Create))
-                {
-                    PngBitmapEncoder encoder = new PngBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(image));
-                    encoder.Save(stream);
-                    stream.Close();
-                }
-            }
-        }
+        ///// <summary>
+        ///// Saves the writable bitmap in the local file system
+        ///// </summary>
+        ///// <param name="filename"></param>
+        ///// <param name="image"></param>
+        //public void CreateThumbnail(string filename, BitmapSource image)
+        //{
+        //    if (filename != string.Empty)
+        //    {
+        //        using (FileStream stream = new FileStream(filename, FileMode.Create))
+        //        {
+        //            PngBitmapEncoder encoder = new PngBitmapEncoder();
+        //            encoder.Frames.Add(BitmapFrame.Create(image));
+        //            encoder.Save(stream);
+        //            stream.Close();
+        //        }
+        //    }
+        //}
         #endregion
 
-
+        #region navigation
+        /// <summary>
+        /// Navigate to the main window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void navigateBtnMainWindow_Click(object sender, RoutedEventArgs e)
         {
             var newwindow = new MainWindow(); //create your new form.
@@ -323,20 +397,38 @@ namespace FRMC_Kinect
             this.Close(); //only if you want to close the current form.
         }
 
+
+        /// <summary>
+        /// Navigate to the register window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void navigateBtnRegister_Click(object sender, RoutedEventArgs e)
         {
             var newwindow = new Register();
             newwindow.Show();
             this.Close();
         }
+        #endregion
 
 
+
+        /// <summary>
+        /// Window Closing Event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void DataWindow_Closing(object sender, CancelEventArgs e)
         {
             mySqlController.closeConnection();
   
         }
 
+        /// <summary>
+        /// Window Loading Event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void DataWindow_Open(object sender, RoutedEventArgs e)
         {
 
@@ -499,7 +591,88 @@ namespace FRMC_Kinect
             }
 
         }
+
+
+        #region create thumbnail
+        /// <summary>
+        /// Saves the writable bitmap in the local file system
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="image"></param>
+        public void CreateThumbnail2(string filename, BitmapSource image)
+        {
+            if (filename != string.Empty)
+            {
+                using (FileStream stream = new FileStream(filename, FileMode.Create))
+                {
+                    JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(image));
+                    encoder.Save(stream);
+                    stream.Close();
+                }
+            }
+        }
+        #endregion
+
+
+        #region time triggered functions
+        /// <summary>
+        /// Uploads the picure every 7 seconds to the ftp server
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void executeTimer(object sender, EventArgs e)
+        {
+            ftpup2.modelupload("upload", filename);
+
+        }
+
+        /// <summary>
+        /// Activates the facerecognition function of keylemon every 10 seconds
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void exectuteTimerAsync(object sender, EventArgs e)
+        {
+            klemon.RecognizeUserFace();
+        }
+        #endregion
+
+
+
+        public void findUserIdbyModelId(){
+
+
+
+              while (ListBox1.SelectedItems.Count > 0)
+    {
+        ListBox1.Items.Remove(ListBox1.SelectedItem);
+    }
+
+
+            
+            foreach (var userId in klemon.ErkannteModels)
+            {
+
+                User user = new User();
+
+                user.ModelId = userId.ToString();
+               
+
+                userList.Add(mySqlController.findUserIdAndNameByModelId(user));
+                ListBox1.Items.Add(user.Vorname + " " + user.Nachname);
+
+
+            }
+
+        }
+
+
+
         
+
+
+         
 
     }
         

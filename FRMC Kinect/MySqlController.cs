@@ -134,6 +134,21 @@ namespace FRMC_Kinect
         }
 
 
+
+
+        public object findUserIdAndNameByModelId(User user)
+        {
+            MySqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT Firstname,Lastname,UserId FROM User WHERE ModelId='" + user.ModelId + "'";
+            cmd.Prepare();
+            cmd.ExecuteNonQuery();
+
+
+            return user;
+        }
+
+
+
         public List<string> findAllModelIdFromDb(User user)
              {
 
