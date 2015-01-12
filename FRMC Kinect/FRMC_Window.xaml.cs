@@ -27,6 +27,8 @@ using System.Drawing;
 
 
 
+
+
 namespace FRMC_Kinect
 {
  
@@ -34,6 +36,8 @@ namespace FRMC_Kinect
        
 
     {
+
+    
 
      MySqlController mySqlController = new MySqlController();
        
@@ -155,6 +159,14 @@ namespace FRMC_Kinect
 
         //Stellte Gesten Commands für den MediaPlayer zu verfügung
         private GestureCommands gestureCommands = new GestureCommands();
+
+
+
+         KeyLemon klemon = new KeyLemon();
+
+
+         List<object> userList = new List<object>();
+        
 
 
         public ImageSource kinectImageSource
@@ -500,6 +512,41 @@ namespace FRMC_Kinect
 
         }
         
+
+
+        public void findUserIdbyModelId(){
+
+
+
+              while (ListBox1.SelectedItems.Count > 0)
+    {
+        ListBox1.Items.Remove(ListBox1.SelectedItem);
+    }
+
+
+            
+            foreach (var userId in klemon.ErkannteModels)
+            {
+
+                User user = new User();
+
+                user.ModelId = userId.ToString();
+               
+
+                userList.Add(mySqlController.findUserIdAndNameByModelId(user));
+                ListBox1.Items.Add(user.Vorname + " " + user.Nachname);
+
+
+            }
+
+        }
+
+
+
+        
+
+
+         
 
     }
         
