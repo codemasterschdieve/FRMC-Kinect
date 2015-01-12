@@ -203,12 +203,12 @@ namespace FRMC_Kinect
         /// <summary>
         /// Instantiate timer for exectue functions in time intervalls
         /// </summary>
-        DispatcherTimer timer = new DispatcherTimer();
+        DispatcherTimer timerUpload = new DispatcherTimer();
 
         /// <summary>
         /// Instantiate timer for exectue functions in time intervalls
         /// </summary>
-        DispatcherTimer timerasync = new DispatcherTimer();
+        DispatcherTimer timerasyncRecognizeUserFace = new DispatcherTimer();
 
         /// <summary>
         /// Starting timer flag
@@ -348,14 +348,15 @@ namespace FRMC_Kinect
             filename = "C:\\Kinect\\scan.jpg";
             CreateThumbnail2(filename, bodyBitmap);
 
+            //ftpup2.scanupload(filename);
             if(starttimer)
             {
-                timer.Tick += new EventHandler(executeTimer);
-                timer.Interval = new TimeSpan(0, 0, 7);
-                timer.Start();
-                timerasync.Tick += new EventHandler(exectuteTimerAsync);
-                timerasync.Interval = new TimeSpan(0, 0, 10);
-                timerasync.Start();
+                timerUpload.Tick += new EventHandler(executeUploadTimer);
+                timerUpload.Interval = new TimeSpan(0, 0, 5);
+                timerUpload.Start();
+                timerasyncRecognizeUserFace.Tick += new EventHandler(exectuteRecognizeUserFaceTimerAsync);
+                timerasyncRecognizeUserFace.Interval = new TimeSpan(0, 0, 10);
+                timerasyncRecognizeUserFace.Start();
                 this.starttimer = false;
             }
 
@@ -621,9 +622,9 @@ namespace FRMC_Kinect
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void executeTimer(object sender, EventArgs e)
+        private void executeUploadTimer(object sender, EventArgs e)
         {
-            ftpup2.modelupload("upload", filename);
+            ftpup2.scanupload(filename);
 
         }
 
@@ -632,39 +633,59 @@ namespace FRMC_Kinect
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void exectuteTimerAsync(object sender, EventArgs e)
+        private void exectuteRecognizeUserFaceTimerAsync(object sender, EventArgs e)
         {
-            klemon.RecognizeUserFace();
+            //schau ob bild erreibar auf ftp
+            //wenn erreichner -> executeTimer Pause
+            //recognize()
+            //wenn fertig starte timer wieder
+
+            bool pictureAvailable = ftpup2.checkScanUploadImage();
+            
+            if (pictureAvailable)
+            {
+                timerUpload.Stop();
+                timerasyncRecognizeUserFace.Stop();
+
+                klemon.RecognizeUserFace();
+
+                timerUpload.Start();
+                timerasyncRecognizeUserFace.Start();
+            }
+                
+            
         }
         #endregion
 
 
 
-        public void findUserIdbyModelId(){
+        public void findUserIdbyModelId() {
 
-
-
-              while (ListBox1.SelectedItems.Count > 0)
-    {
-        ListBox1.Items.Remove(ListBox1.SelectedItem);
-    }
-
-
-            
-            foreach (var userId in klemon.ErkannteModels)
+            while (ListBox1.SelectedItems.Count > 0)
             {
-
+                ListBox1.Items.Remove(ListBox1.SelectedItem);
+            }
+            
+            foreach (var modelId in klemon.ErkannteModels)
+            {
                 User user = new User();
 
-                user.ModelId = userId.ToString();
+                user.ModelId = modelId;
                
-
                 userList.Add(mySqlController.findUserIdAndNameByModelId(user));
                 ListBox1.Items.Add(user.Vorname + " " + user.Nachname);
-
-
             }
+        }
 
+        public void test_Click(Object sender, RoutedEventArgs args)
+        {
+            User user = new User();
+            user.UserId = 57;
+            mySqlController.findGenreByUserId(user);
+
+            string genreString = string.Join(",", user.MusicGenres.ToArray());
+
+            MessageBox.Show(genreString);
         }
 
 

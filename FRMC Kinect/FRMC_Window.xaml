@@ -28,9 +28,10 @@
                     </Grid.ColumnDefinitions>
                     <Button x:Name="NavigateMainwindow" Content="Zur Startseite"  HorizontalAlignment="Left" TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="350px,0,0,0" Grid.Column="0" Click="navigateBtnMainWindow_Click"/>
                     <Button x:Name="NavigateRegister"  Content="Zur Registration" HorizontalAlignment="Right"  TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="100px,0,0,0" Grid.Column="1" Click="navigateBtnRegister_Click"/>
+                <Button x:Name="Test"  Content="Test" HorizontalAlignment="Right"  TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="100px,0,0,0" Grid.Column="2" Click="test_Click"/>
 
 
-                </Grid>
+            </Grid>
                 <Line Stroke="Black" Stretch="Fill" X2="1" Margin="0,20px,0,20px"/>
             </StackPanel>
         

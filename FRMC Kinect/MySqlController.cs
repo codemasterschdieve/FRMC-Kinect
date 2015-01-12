@@ -139,9 +139,29 @@ namespace FRMC_Kinect
         public object findUserIdAndNameByModelId(User user)
         {
             MySqlCommand cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT Firstname,Lastname,UserId FROM User WHERE ModelId='" + user.ModelId + "'";
+            cmd.CommandText = "SELECT Firstname, Lastname, UserId FROM User WHERE ModelId='" + user.ModelId + "'";
             cmd.Prepare();
-            cmd.ExecuteNonQuery();
+
+            
+
+
+            return user;
+        }
+
+        public User findGenreByUserId(User user)
+        {
+            MySqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT MusicGenreId FROM mn_AllocationTable_User_MusicGenre WHERE UserId='" + user.UserId + "'";
+            cmd.Prepare();
+
+
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                //int column = rdr["MusicGenreId"];
+                int musicGenreId = Convert.ToInt32(rdr["MusicGenreId"]);
+                user.MusicGenres.Add(musicGenreId);
+            }
 
 
             return user;
