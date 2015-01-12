@@ -158,7 +158,7 @@ namespace FRMC_Kinect
                 // here, we're doing 1 image against 1 model but it's
                 // possible to do n images against n models.
 
-                string[] my_image_to_test = new string[] { "http://www.frmc.wi-stuttgart.de/scan/scan.jpg" };
+                string[] my_image_to_test = new string[] { "http://www.frmc.wi-stuttgart.de/scan/uploadscan.jpg" };
 
 
                 response2 = api.RecognizeFace(modelid, my_image_to_test, null, null);
