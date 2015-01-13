@@ -20,6 +20,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using MySql.Data.MySqlClient;
+using System.Threading;
 
 namespace FRMC_Kinect
 {
@@ -454,18 +455,19 @@ namespace FRMC_Kinect
                             System.Diagnostics.Debug.WriteLine("Gesichtsposition in y-Richtung: " + headJoint.Position.Y);
                             System.Diagnostics.Debug.WriteLine("Gesichtsposition in z-Richtung: " + headJoint.Position.Z);
 
+                           
+                                // get the depth image coordinates for the head
+                                DepthSpacePoint depthPoint = this.coordinateMapper.MapCameraPointToDepthSpace(headJoint.Position);
+                                System.Diagnostics.Debug.WriteLine("Gesichtsentfernung von der kinect");
+                                System.Diagnostics.Debug.WriteLine("Gesichtsentfernung in x-Richtung: " + depthPoint.X);
+                                System.Diagnostics.Debug.WriteLine("Gesichtsentfernung in y-Richtung: " + depthPoint.Y);
+                                int depthX = (int)Math.Floor(depthPoint.X + 0.5);
+                                int depthY = (int)Math.Floor(depthPoint.Y + 0.5);
+                                int depthIndex = (depthY * this.kinectSensor.DepthFrameSource.FrameDescription.Width) + depthX;
+                                //  int depthIndex = (depthY + this.kinectSensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra).Width) + depthX;
 
-                            // get the depth image coordinates for the head
-                            DepthSpacePoint depthPoint = this.coordinateMapper.MapCameraPointToDepthSpace(headJoint.Position);
-                            System.Diagnostics.Debug.WriteLine("Gesichtsentfernung von der kinect");
-                            System.Diagnostics.Debug.WriteLine("Gesichtsentfernung in x-Richtung: " + depthPoint.X);
-                            System.Diagnostics.Debug.WriteLine("Gesichtsentfernung in y-Richtung: " + depthPoint.Y);
-                            int depthX = (int)Math.Floor(depthPoint.X + 0.5);
-                            int depthY = (int)Math.Floor(depthPoint.Y + 0.5);
-                            int depthIndex = (depthY * this.kinectSensor.DepthFrameSource.FrameDescription.Width) + depthX;
-                            //  int depthIndex = (depthY + this.kinectSensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra).Width) + depthX;
-
-                            ushort depth = depthData[depthIndex];
+                                ushort depth = depthData[depthIndex];
+                           
 
                             // measure the size of the pixel
                             float hFov = this.kinectSensor.DepthFrameSource.FrameDescription.HorizontalFieldOfView / 2;
@@ -484,10 +486,11 @@ namespace FRMC_Kinect
                             System.Diagnostics.Debug.WriteLine("bitmapsize: " + bitmapsize);
                             System.Diagnostics.Debug.WriteLine("bitmapsize int: " + (int)bitmapsize);
 
-
-                           this.faceBitmap = bodyBitmap.Crop(new Rect(x, y, bitmapsize, bitmapsize));
-                           this.bodyBitmap.DrawRectangle(x,y,(int)bitmapsize+x,(int)bitmapsize+y,Colors.Red);
-
+                         
+                           
+                                this.faceBitmap = bodyBitmap.Crop(new Rect(x, y, bitmapsize, bitmapsize));
+                                this.bodyBitmap.DrawRectangle(x, y, (int)bitmapsize + x, (int)bitmapsize + y, Colors.Red);
+                           
 
 
 
@@ -502,6 +505,11 @@ namespace FRMC_Kinect
                     }
 
                 }
+            }
+            catch(Exception excep)
+            {
+                System.Diagnostics.Debug.WriteLine("Bei der Aufnahme sind Probleme aufgetaucht");
+                System.Diagnostics.Debug.WriteLine(excep.Message);
             }
             finally
             {
@@ -813,7 +821,12 @@ namespace FRMC_Kinect
 
                     ftpup.modelupload(UserIdGlobal, filename);
                     klemon.keyLemonModelCreation(UserIdGlobal, Firstnametextbox.Text, Lastnametextbox.Text, userId2);
-                    klemon.RecognizeUserFace();
+           //         klemon.RecognizeUserFace();
+
+                    Thread.Sleep(2000);
+                    var newwindow = new FRMC_Window(); //create your new form.
+                    newwindow.Show(); //show the new form.
+                    this.Close(); //only if you want to close the current form
 
 
                     }
@@ -912,7 +925,7 @@ namespace FRMC_Kinect
 
         void DataWindow_Closing(object sender, CancelEventArgs e)
         {
-            mySqlController.closeConnection();
+          //  mySqlController.closeConnection();
         }
         
   

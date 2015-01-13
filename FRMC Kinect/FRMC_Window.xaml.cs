@@ -210,6 +210,11 @@ namespace FRMC_Kinect
         /// </summary>
         DispatcherTimer timerasyncRecognizeUserFace = new DispatcherTimer();
 
+        // <summary>
+        /// Instantiate timer for exectue functions in time intervalls
+        /// </summary>
+        DispatcherTimer timerasyncScanSaveLocal= new DispatcherTimer();
+
         /// <summary>
         /// Starting timer flag
         /// </summary>
@@ -346,21 +351,82 @@ namespace FRMC_Kinect
 
 
             filename = "C:\\Kinect\\scan.jpg";
-            CreateThumbnail2(filename, bodyBitmap);
+            //CreateThumbnail2(filename, bodyBitmap);
 
             //ftpup2.scanupload(filename);
             if(starttimer)
             {
+                timerasyncScanSaveLocal.Tick += new EventHandler(executeScanLocalImageTimerAsynch);
+                timerasyncScanSaveLocal.Interval = new TimeSpan(0, 0, 8);
+                timerasyncScanSaveLocal.Start();
+
                 timerUpload.Tick += new EventHandler(executeUploadTimer);
-                timerUpload.Interval = new TimeSpan(0, 0, 5);
+                timerUpload.Interval = new TimeSpan(0, 0, 15);
                 timerUpload.Start();
+
                 timerasyncRecognizeUserFace.Tick += new EventHandler(exectuteRecognizeUserFaceTimerAsync);
-                timerasyncRecognizeUserFace.Interval = new TimeSpan(0, 0, 10);
+                timerasyncRecognizeUserFace.Interval = new TimeSpan(0, 0, 21);
                 timerasyncRecognizeUserFace.Start();
                 this.starttimer = false;
             }
 
         }
+        #endregion
+
+        #region time triggered functions
+
+        private void executeScanLocalImageTimerAsynch(object sender, EventArgs e)
+        {
+            CreateThumbnail2(filename, bodyBitmap);
+        }
+
+        /// <summary>
+        /// Uploads the picure every 7 seconds to the ftp server
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void executeUploadTimer(object sender, EventArgs e)
+        {
+            timerasyncScanSaveLocal.Stop();
+
+            ftpup2.scanupload(filename);
+
+            timerasyncScanSaveLocal.Start();
+
+        }
+
+        /// <summary>
+        /// Activates the facerecognition function of keylemon every 10 seconds
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void exectuteRecognizeUserFaceTimerAsync(object sender, EventArgs e)
+        {
+            //schau ob bild erreibar auf ftp
+            //wenn erreichner -> executeTimer Pause
+            //recognize()
+            //wenn fertig starte timer wieder
+
+            bool pictureAvailable = ftpup2.checkScanUploadImage();
+
+            if (pictureAvailable)
+            {
+                timerasyncScanSaveLocal.Stop();
+                timerUpload.Stop();
+                timerasyncRecognizeUserFace.Stop();
+
+                klemon.RecognizeUserFace();
+                findUserIdbyModelId();
+
+                timerasyncScanSaveLocal.Start();
+                timerUpload.Start();
+                timerasyncRecognizeUserFace.Start();
+            }
+
+
+        }
+
+        
         #endregion
 
 
@@ -616,46 +682,7 @@ namespace FRMC_Kinect
         #endregion
 
 
-        #region time triggered functions
-        /// <summary>
-        /// Uploads the picure every 7 seconds to the ftp server
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void executeUploadTimer(object sender, EventArgs e)
-        {
-            ftpup2.scanupload(filename);
-
-        }
-
-        /// <summary>
-        /// Activates the facerecognition function of keylemon every 10 seconds
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void exectuteRecognizeUserFaceTimerAsync(object sender, EventArgs e)
-        {
-            //schau ob bild erreibar auf ftp
-            //wenn erreichner -> executeTimer Pause
-            //recognize()
-            //wenn fertig starte timer wieder
-
-            bool pictureAvailable = ftpup2.checkScanUploadImage();
-            
-            if (pictureAvailable)
-            {
-                timerUpload.Stop();
-                timerasyncRecognizeUserFace.Stop();
-
-                klemon.RecognizeUserFace();
-
-                timerUpload.Start();
-                timerasyncRecognizeUserFace.Start();
-            }
-                
-            
-        }
-        #endregion
+        
 
 
 

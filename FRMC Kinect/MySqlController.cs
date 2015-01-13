@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.Windows;
+using System.Data;
 
 namespace FRMC_Kinect
 {
@@ -16,9 +17,7 @@ namespace FRMC_Kinect
 
 
         public MySqlController() {
-            if(connection == null) {
-                openMySqlConnection();
-            }
+           
         }
 
         public  string CreateConnStr(string server, string databaseName, string user, string pass)
@@ -36,16 +35,22 @@ namespace FRMC_Kinect
         {
            try
                 {
-                    // Connect to MySQL Database
+                    if (connection == null || connection.State != ConnectionState.Open)
+                    {
 
-                    //generate the connection string
-                    string connStr = CreateConnStr("www.wi-stuttgart.de", "d01c6657", "d01c6657", "hdm123!");
 
-                    //create a MySQL connection with a query string
-                    connection = new MySqlConnection(connStr);
+                        // Connect to MySQL Database
 
-                    //open the connection
-                   connection.Open();
+                        //generate the connection string
+                        string connStr = CreateConnStr("www.wi-stuttgart.de", "d01c6657", "d01c6657", "hdm123!");
+
+                        //create a MySQL connection with a query string
+                        connection = new MySqlConnection(connStr);
+
+                        //open the connection
+                        connection.Open();
+                    }
+             
 
            }      catch (MySqlException ex)
                 {
@@ -65,24 +70,19 @@ namespace FRMC_Kinect
         public void createUser(User user )
         {
 
-
+            openMySqlConnection();
               MySqlCommand cmd = connection.CreateCommand();
-
-
-
               cmd.CommandText = "INSERT INTO User(Firstname,Lastname,Passwort,Email) VALUES('" + user.Vorname + "','" + user.Nachname + "','" + user.Passwort + "','" + user.Email + "') ";
                    
-
             cmd.Prepare();
-            cmd.ExecuteNonQuery();
-
-          
-
+            cmd.ExecuteNonQuery();         
         }
 
         public void createGenreForUser(User user)
         {
-
+            
+              
+              openMySqlConnection();
             MySqlCommand cmd = connection.CreateCommand();
 
 
@@ -91,6 +91,7 @@ namespace FRMC_Kinect
                 cmd.CommandText = "INSERT INTO mn_AllocationTable_User_MusicGenre(UserId,MusicGenreId) VALUES( '" + user.UserId + "','" + name + "') ";
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
+                
 
                
             }
@@ -101,6 +102,7 @@ namespace FRMC_Kinect
 
         public int findUserByEmail(User user)
         {
+            openMySqlConnection();
             MySqlCommand cmd = connection.CreateCommand();
 
             cmd.CommandText = "SELECT UserId FROM User WHERE Email='" + user.Email + "'";
@@ -114,6 +116,7 @@ namespace FRMC_Kinect
 
         public object findEmailByEmail(User user)
         {
+            openMySqlConnection();
             MySqlCommand cmd = connection.CreateCommand();
 
             cmd.CommandText = "SELECT Email FROM User WHERE Email='" + user.Email + "'";
@@ -126,6 +129,7 @@ namespace FRMC_Kinect
 
         public void updateUser(User user)
         {
+            openMySqlConnection();
             MySqlCommand cmd = connection.CreateCommand();
             cmd.CommandText = "UPDATE User SET ModelId='" + user.ModelId + "'WHERE UserId = '" + user.UserId + "'";
             cmd.Prepare();
@@ -138,13 +142,11 @@ namespace FRMC_Kinect
 
         public User findUserIdAndNameByModelId(User user)
         {
+            openMySqlConnection();
             MySqlCommand cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT Firstname, Lastname, UserId FROM User WHERE ModelId='" + user.ModelId + "'";
             cmd.Prepare();
-
-            
-
-
+        
             return user;
         }
 
@@ -157,6 +159,7 @@ namespace FRMC_Kinect
         {
             try
             {
+                openMySqlConnection();
                 string sqlCommand = "SELECT * " +
                                     "FROM mn_AllocationTable_User_MusicGenre " +
                                     "INNER JOIN MusicGenre " +
@@ -196,6 +199,7 @@ namespace FRMC_Kinect
         {
             try
             {
+                openMySqlConnection();
                 string sqlCommand = "SELECT UserId, Firstname, Lastname, Email  FROM User WHERE ModelId='" + user.ModelId + "'";
 
                 MySqlCommand cmd = connection.CreateCommand();
@@ -225,7 +229,6 @@ namespace FRMC_Kinect
                 MessageBox.Show(ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
-
             return user;
         }
 
@@ -233,6 +236,7 @@ namespace FRMC_Kinect
 
         public List<string> findAllModelIdFromDb(User user) {
 
+            openMySqlConnection();
             MySqlCommand cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT ModelId FROM User ";
             cmd.Prepare();
