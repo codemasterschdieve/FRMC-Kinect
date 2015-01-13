@@ -9,12 +9,13 @@ namespace FRMC_Kinect
     public class GestureCommands
     {
         private bool isPlaying = false;
-        private  bool isPaused = false;
-        private  bool commandModeActive = false;
+        private bool isPaused = false;
+        private bool commandModeActive = false;
         //private  string lastGestureAction;
         private string currentGestureAction;
         private string logMessage = "";
         private MediaPlayerController mediaPlayer;
+        private List<User> currentUserList;
 
         public GestureCommands()
         {
@@ -26,8 +27,11 @@ namespace FRMC_Kinect
         /// </summary>
         /// <param name="gestureAction"></param>
         /// <returns></returns>
-        public string InitializeMediaPlayerActions(string gestureAction)
+        public string InitializeMediaPlayerActions(string gestureAction, List<User> currentUserList)
         {
+            //Aktuelle User zuweisen
+            this.currentUserList = currentUserList;
+
             //Aktuellen Status String zuweisen
             currentGestureAction = gestureAction;
 
@@ -62,18 +66,32 @@ namespace FRMC_Kinect
         /// </summary>
         private void startPlayAction()
         {
-            if (commandModeActive &&  !isPlaying && currentGestureAction == "Open")
+            if (commandModeActive && !isPlaying && currentGestureAction == "Open")
             {
                 //todo 
                 if (!isPlaying)
                 {
-                    mediaPlayer.StartPlayer();
+                    List<List<string>> currentUserGenres = new List<List<string>>(); ;
+                    foreach(User user in currentUserList) {
+                        currentUserGenres.Add(user.MusicGenreNames);
+                    }
+
+                    List<string> genreToPlay = GenreFinder.FindMatch(currentUserGenres);
+
+                    Random rnd = new Random();
+                    int randomGenreIndex = rnd.Next(0, genreToPlay.Count - 1);
+
+                    string randomGenre = genreToPlay.ElementAt(randomGenreIndex);
+
+                    mediaPlayer.PlayGenrePlaylist(randomGenre);
                     logMessage = "Start";
                     commandModeActive = false;
                     isPlaying = true;
 
                 }
-            } else if (commandModeActive && isPlaying && currentGestureAction == "Open") {
+            }
+            else if (commandModeActive && isPlaying && currentGestureAction == "Open")
+            {
                 mediaPlayer.Play();
                 logMessage = "Play";
                 commandModeActive = false;

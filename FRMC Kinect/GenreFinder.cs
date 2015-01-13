@@ -9,13 +9,13 @@ namespace FRMC_Kinect
 {
     public class GenreFinder
     {
-        
+
         /// <summary>
         /// Findet alle Genres die in allen übergebenen Listen vorhanden sind.
         /// </summary>
         /// <param name="genreLists"></param>
         /// <returns></returns>
-        public List<string> FindMatch(List<List<string>> genreLists)
+        public static List<string> FindMatch(List<List<string>> genreLists)
         {
             int amountUsers = genreLists.Count;
             List<string> matchingGenres = null;
@@ -40,12 +40,13 @@ namespace FRMC_Kinect
         /// </summary>
         /// <param name="listsToJoin"></param>
         /// <returns></returns>
-        private List<string> JoinLists(List<List<string>> listsToJoin)
+        private static List<string> JoinLists(List<List<string>> listsToJoin)
         {
             List<string> allJoined = new List<string>();
 
-            foreach(List<string> list in listsToJoin) {
-                allJoined.AddRange(list); 
+            foreach (List<string> list in listsToJoin)
+            {
+                allJoined.AddRange(list);
             }
             return allJoined;
         }

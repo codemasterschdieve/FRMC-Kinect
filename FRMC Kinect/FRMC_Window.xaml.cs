@@ -174,7 +174,7 @@ namespace FRMC_Kinect
         /// <summary>
         /// Instantiate userList to save user objects
         /// </summary>
-        List<object> userList = new List<object>();
+        List<User> userList = new List<User>();
         
 
         /// <summary>
@@ -578,7 +578,7 @@ namespace FRMC_Kinect
 
                                 try
                                 {
-                                    gestureCommands.InitializeMediaPlayerActions(rightHandState);
+                                    gestureCommands.InitializeMediaPlayerActions(rightHandState, userList);
                                 } catch(Exception ex) {
                                     MessageBox.Show(ex.Message);
                                     System.Diagnostics.Debug.WriteLine(ex.StackTrace);
@@ -671,29 +671,26 @@ namespace FRMC_Kinect
                 User user = new User();
 
                 user.ModelId = modelId;
-               
-                userList.Add(mySqlController.findUserIdAndNameByModelId(user));
+
+                user = mySqlController.findUserWithGenreByModelId(user);
+            
+                userList.Add(user);
+
                 ListBox1.Items.Add(user.Vorname + " " + user.Nachname);
-            }
+            }          
         }
 
         public void test_Click(Object sender, RoutedEventArgs args)
         {
             User user = new User();
-            user.UserId = 57;
-            mySqlController.findGenreByUserId(user);
+            user.ModelId = "0b3dba48-9779-421f-b06c-743e06c21e15";
+            user = mySqlController.findUserWithGenreByModelId(user);
 
-            string genreString = string.Join(",", user.MusicGenres.ToArray());
+            string genreIdsString = string.Join(",", user.MusicGenres.ToArray());
+            string genreNamesString = string.Join(",", user.MusicGenreNames.ToArray());
 
-            MessageBox.Show(genreString);
-        }
-
-
-
-        
-
-
-         
+            MessageBox.Show("user: " + user.Vorname + " ids: " + genreIdsString + " genre names: " + genreNamesString);
+        }       
 
     }
         

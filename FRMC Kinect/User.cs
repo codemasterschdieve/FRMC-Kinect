@@ -15,10 +15,8 @@ namespace FRMC_Kinect
         private string modelId;
         private string passwort;
         private List<int> musicGenres = new List<int>();
-
-
-
-
+        private List<string> musicGenreNames = new List<string>();
+      
 
 
         public int UserId
@@ -67,6 +65,12 @@ namespace FRMC_Kinect
         {
             get { return musicGenres; }
             set { musicGenres = value; }
+        }
+
+        public List<string> MusicGenreNames
+        {
+            get { return musicGenreNames; }
+            set { musicGenreNames = value; }
         }
 
        

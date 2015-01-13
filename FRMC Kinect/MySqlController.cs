@@ -136,7 +136,7 @@ namespace FRMC_Kinect
 
 
 
-        public object findUserIdAndNameByModelId(User user)
+        public User findUserIdAndNameByModelId(User user)
         {
             MySqlCommand cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT Firstname, Lastname, UserId FROM User WHERE ModelId='" + user.ModelId + "'";
@@ -148,58 +148,108 @@ namespace FRMC_Kinect
             return user;
         }
 
+        /// <summary>
+        /// Fügt dem User eine Liste mit den MusicGenreIds und den MusicGenreNamen hinzufügen
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public User findGenreByUserId(User user)
         {
-            MySqlCommand cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT MusicGenreId FROM mn_AllocationTable_User_MusicGenre WHERE UserId='" + user.UserId + "'";
-            cmd.Prepare();
-
-
-            MySqlDataReader rdr = cmd.ExecuteReader();
-            while (rdr.Read())
+            try
             {
-                //int column = rdr["MusicGenreId"];
-                int musicGenreId = Convert.ToInt32(rdr["MusicGenreId"]);
-                user.MusicGenres.Add(musicGenreId);
+                string sqlCommand = "SELECT * " +
+                                    "FROM mn_AllocationTable_User_MusicGenre " +
+                                    "INNER JOIN MusicGenre " +
+                                    "ON mn_AllocationTable_User_MusicGenre.MusicGenreId = MusicGenre.MusicGenreId " +
+                                    "WHERE mn_AllocationTable_User_MusicGenre.UserId ='" + user.UserId + "'";
+
+                MySqlCommand cmd = connection.CreateCommand();
+                cmd.CommandText = sqlCommand;
+                cmd.Prepare();
+
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    int musicGenreId = Convert.ToInt32(rdr["MusicGenreId"]);
+                    string musicGenreName = rdr["Name"].ToString();
+
+                    user.MusicGenres.Add(musicGenreId);
+                    user.MusicGenreNames.Add(musicGenreName);
+                }
+                rdr.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                Console.WriteLine(ex.StackTrace);
             }
 
+            return user;
+        }
+
+        /// <summary>
+        /// Holt den User mit allen Details und den Genres aus der Datenbank
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public User findUserWithGenreByModelId(User user)
+        {
+            try
+            {
+                string sqlCommand = "SELECT UserId, Firstname, Lastname, Email  FROM User WHERE ModelId='" + user.ModelId + "'";
+
+                MySqlCommand cmd = connection.CreateCommand();
+                cmd.CommandText = sqlCommand;
+                cmd.Prepare();
+
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    int userId = Convert.ToInt32(rdr["UserId"]);
+                    string firstName = rdr["Firstname"].ToString();
+                    string lastName = rdr["Lastname"].ToString();
+                    string email = rdr["Email"].ToString();
+
+                    user.UserId = userId;
+                    user.Vorname = firstName;
+                    user.Nachname = lastName;
+                    user.Email = email;                                       
+                }
+                rdr.Close();
+
+                //jetz noch genres dem user mit eigenem select hinzufügen
+                findGenreByUserId(user);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
 
             return user;
         }
 
 
 
-        public List<string> findAllModelIdFromDb(User user)
-             {
+        public List<string> findAllModelIdFromDb(User user) {
 
             MySqlCommand cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT ModelId FROM User ";
             cmd.Prepare();
 
-
             MySqlDataReader Reader = cmd.ExecuteReader();
 
+            if (!Reader.HasRows) return null;
+            while (Reader.Read())
+            {
+                Console.WriteLine(GetDBString("ModelId", Reader));          
 
+                model_ids.Add(GetDBString("ModelId", Reader));             
+            }
 
-        if (!Reader.HasRows) return null;
-        while (Reader.Read())
-        {
-            Console.WriteLine(GetDBString("ModelId", Reader));
-            
-            
-            
+            Reader.Close();
 
-            model_ids.Add(GetDBString("ModelId", Reader));
-
-       
-            
-        }
-        Reader.Close();
-
-
-
-
-        return model_ids;
+            return model_ids;
 
         }
 
