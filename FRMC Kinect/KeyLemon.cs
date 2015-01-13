@@ -70,6 +70,9 @@ namespace FRMC_Kinect
         {
             try
             {
+                //Alte Models Löschen
+                ErkannteModels.Clear();
+
                 var model_ids = mySqlController.findAllModelIdFromDb(user);
 
                 foreach (var modelid in model_ids)

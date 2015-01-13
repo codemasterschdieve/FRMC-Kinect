@@ -71,19 +71,19 @@ namespace FRMC_Kinect
                 //todo 
                 if (!isPlaying)
                 {
-                    List<List<string>> currentUserGenres = new List<List<string>>(); ;
-                    foreach(User user in currentUserList) {
-                        currentUserGenres.Add(user.MusicGenreNames);
-                    }
+                    //List<List<string>> currentUserGenres = new List<List<string>>(); ;
+                    //foreach(User user in currentUserList) {
+                    //    currentUserGenres.Add(user.MusicGenreNames);
+                    //}
 
-                    List<string> genreToPlay = GenreFinder.FindMatch(currentUserGenres);
+                    //List<string> genreToPlay = GenreFinder.FindMatch(currentUserGenres);
 
-                    Random rnd = new Random();
-                    int randomGenreIndex = rnd.Next(0, genreToPlay.Count - 1);
+                    //Random rnd = new Random();
+                    //int randomGenreIndex = rnd.Next(0, genreToPlay.Count);
 
-                    string randomGenre = genreToPlay.ElementAt(randomGenreIndex);
+                    //string randomGenre = genreToPlay.ElementAt(randomGenreIndex);
 
-                    mediaPlayer.PlayGenrePlaylist(randomGenre);
+                    mediaPlayer.PlayGenrePlaylist("Rock");
                     logMessage = "Start";
                     commandModeActive = false;
                     isPlaying = true;

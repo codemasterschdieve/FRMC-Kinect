@@ -118,6 +118,11 @@
              
                 </ListBox>
 
+                <TextBlock Name="GestureActionListBox">
+
+
+                </TextBlock>
+
 
                 <Label x:Name="huhu"  TextBlock.TextAlignment="Center" FontSize="20px" Content="Huhu"/>
 

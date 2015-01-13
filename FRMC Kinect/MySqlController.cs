@@ -61,8 +61,11 @@ namespace FRMC_Kinect
 
         public void closeConnection()
         {
-
-            connection.Close();
+            if (connection != null)
+            {
+                connection.Close();
+            }
+            
 
         }
 

@@ -288,7 +288,83 @@ namespace FRMC_Kinect
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Window Closing Event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void DataWindow_Closing(object sender, CancelEventArgs e)
+        {
+            mySqlController.closeConnection();
 
+        }
+
+        /// <summary>
+        /// Window Loading Event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void DataWindow_Open(object sender, RoutedEventArgs e)
+        {
+
+
+            // get the kinectSensor object
+            this.kinectSensor = KinectSensor.GetDefault();
+
+
+            // open the reader for the color frames
+            this.colorFrameReader = this.kinectSensor.ColorFrameSource.OpenReader();
+
+            // get colorFrameDescription
+            this.colorFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
+
+
+            // open the reader for the depth frames
+            this.depthFrameReader = this.kinectSensor.DepthFrameSource.OpenReader();
+
+            // get depthFrameDescription
+            this.depthFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
+
+
+            // open the reader for the body index frames
+            this.bodyIndexFrameReader = this.kinectSensor.BodyIndexFrameSource.OpenReader();
+
+            // get bodyIndexFrameDescription
+            this.bodyIndexFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
+
+
+            // open the reader for the multispouce frames
+            //Für GestureCommands
+            this.multiFrameSourceReader = this.kinectSensor.OpenMultiSourceFrameReader(FrameSourceTypes.Depth | FrameSourceTypes.Color | FrameSourceTypes.BodyIndex | FrameSourceTypes.Body);
+
+
+            // create the colorFrameDescription from the ColorFrameSource using Bgra format
+            FrameDescription colorFrameDescriptionBgra = this.kinectSensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra);
+
+            // create faceBitmap
+            this.faceBitmap = new WriteableBitmap(colorFrameDescriptionBgra.Width, colorFrameDescriptionBgra.Height, 96.0, 96.0, PixelFormats.Bgra32, null);
+
+            // create bodyBitmap
+            this.bodyBitmap = new WriteableBitmap(colorFrameDescriptionBgra.Width, colorFrameDescriptionBgra.Height, 96.0, 96.0, PixelFormats.Bgra32, null);
+
+            // get coordinate mapper
+            this.coordinateMapper = this.kinectSensor.CoordinateMapper;
+
+            //// Handler for frame arrival
+            this.colorFrameReader.FrameArrived += this.Reader_ColorFrameArrived;
+            this.multiFrameSourceReader.MultiSourceFrameArrived += Reader_MultiSourceFrameArrived;
+            //this.multiFrameSourceReader.MultiSourceFrameArrived += this.Reader_FrameArrived;
+
+
+            // open the sensor
+            this.kinectSensor.Open();
+
+            // use the window object as the view model in this simple example
+            this.DataContext = this;
+
+
+
+        }
 
         #region mysql connection
         ///// <summary>
@@ -354,7 +430,8 @@ namespace FRMC_Kinect
             //CreateThumbnail2(filename, bodyBitmap);
 
             //ftpup2.scanupload(filename);
-            if(starttimer)
+            //if(starttimer)
+            if (false)
             {
                 timerasyncScanSaveLocal.Tick += new EventHandler(executeScanLocalImageTimerAsynch);
                 timerasyncScanSaveLocal.Interval = new TimeSpan(0, 0, 8);
@@ -372,6 +449,155 @@ namespace FRMC_Kinect
 
         }
         #endregion
+
+        /// <summary>
+        /// Für GestureCommands
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void Reader_MultiSourceFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
+        {
+            var reference = e.FrameReference.AcquireFrame();
+
+            using (ColorFrame colorFrame = reference.ColorFrameReference.AcquireFrame())
+            {
+                    if (colorFrame != null)
+                    {
+                        FrameDescription colorFrameDescription = colorFrame.FrameDescription;
+
+                        using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
+                        {
+                            this.bodyBitmap.Lock();
+
+                            // verify data and write the new color frame data to the display bitmap
+                            if ((colorFrameDescription.Width == this.bodyBitmap.PixelWidth) && (colorFrameDescription.Height == this.bodyBitmap.PixelHeight))
+                            {
+                                colorFrame.CopyConvertedFrameDataToIntPtr(
+                                    this.bodyBitmap.BackBuffer,
+                                    (uint)(colorFrameDescription.Width * colorFrameDescription.Height * 4),
+                                    ColorImageFormat.Bgra);
+
+                                this.bodyBitmap.AddDirtyRect(new Int32Rect(0, 0, this.bodyBitmap.PixelWidth, this.bodyBitmap.PixelHeight));
+
+                            }
+
+                            this.bodyBitmap.Unlock();
+                        }
+                    }
+                }
+
+
+                filename = "C:\\Kinect\\scan.jpg";
+                //CreateThumbnail2(filename, bodyBitmap);
+
+                //ftpup2.scanupload(filename);
+                //if(starttimer)
+                if (false)
+                {
+                    timerasyncScanSaveLocal.Tick += new EventHandler(executeScanLocalImageTimerAsynch);
+                    timerasyncScanSaveLocal.Interval = new TimeSpan(0, 0, 8);
+                    timerasyncScanSaveLocal.Start();
+
+                    timerUpload.Tick += new EventHandler(executeUploadTimer);
+                    timerUpload.Interval = new TimeSpan(0, 0, 15);
+                    timerUpload.Start();
+
+                    timerasyncRecognizeUserFace.Tick += new EventHandler(exectuteRecognizeUserFaceTimerAsync);
+                    timerasyncRecognizeUserFace.Interval = new TimeSpan(0, 0, 21);
+                    timerasyncRecognizeUserFace.Start();
+                    this.starttimer = false;
+                }
+            
+            // Body
+            using (var frame = reference.BodyFrameReference.AcquireFrame())
+            {
+                if (frame != null)
+                {
+
+                    bodies = new Body[frame.BodyFrameSource.BodyCount];
+
+                    frame.GetAndRefreshBodyData(bodies);
+
+                    foreach (var body in bodies)
+                    {
+                        if (body != null)
+                        {
+                            if (body.IsTracked)
+                            {
+                                // Find the joints
+                                Joint handRight = body.Joints[JointType.HandRight];
+                                Joint thumbRight = body.Joints[JointType.ThumbRight];
+
+                                //Joint handLeft = body.Joints[JointType.HandLeft];
+                                //Joint thumbLeft = body.Joints[JointType.ThumbLeft];                                
+
+                                // Find the hand states
+                                string rightHandState = "-";
+                                //string leftHandState = "-";
+
+                                switch (body.HandRightState)
+                                {
+                                    case HandState.Open:
+                                        rightHandState = "Open";
+                                        break;
+                                    case HandState.Closed:
+                                        rightHandState = "Closed";
+                                        break;
+                                    case HandState.Lasso:
+                                        rightHandState = "Lasso";
+                                        break;
+                                    case HandState.Unknown:
+                                        rightHandState = "Unknown...";
+                                        break;
+                                    case HandState.NotTracked:
+                                        rightHandState = "Not tracked";
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                //switch (body.HandLeftState)
+                                //{
+                                //    case HandState.Open:
+                                //        leftHandState = "Open";
+                                //        break;
+                                //    case HandState.Closed:
+                                //        leftHandState = "Closed";
+                                //        break;
+                                //    case HandState.Lasso:
+                                //        leftHandState = "Lasso";
+                                //        break;
+                                //    case HandState.Unknown:
+                                //        leftHandState = "Unknown...";
+                                //        break;
+                                //    case HandState.NotTracked:
+                                //        leftHandState = "Not tracked";
+                                //        break;
+                                //    default:
+                                //        break;
+                                //}
+
+                                //tblRightHandState.Text = rightHandState;
+                                //tblLeftHandState.Text = leftHandState;
+                                GestureActionListBox.Text = rightHandState;
+                                try
+                                {
+                                    gestureCommands.InitializeMediaPlayerActions(rightHandState, userList);
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show(ex.Message);
+                                    System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+                                }
+
+                                //gestureCommands.LogArea = logArea;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
 
         #region time triggered functions
 
@@ -480,184 +706,7 @@ namespace FRMC_Kinect
 
 
 
-        /// <summary>
-        /// Window Closing Event
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void DataWindow_Closing(object sender, CancelEventArgs e)
-        {
-            mySqlController.closeConnection();
-  
-        }
-
-        /// <summary>
-        /// Window Loading Event
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void DataWindow_Open(object sender, RoutedEventArgs e)
-        {
-
-
-            // get the kinectSensor object
-            this.kinectSensor = KinectSensor.GetDefault();
-
-
-            // open the reader for the color frames
-            this.colorFrameReader = this.kinectSensor.ColorFrameSource.OpenReader();
-
-            // get colorFrameDescription
-            this.colorFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
-
-
-            // open the reader for the depth frames
-            this.depthFrameReader = this.kinectSensor.DepthFrameSource.OpenReader();
-
-            // get depthFrameDescription
-            this.depthFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
-
-
-            // open the reader for the body index frames
-            this.bodyIndexFrameReader = this.kinectSensor.BodyIndexFrameSource.OpenReader();
-
-            // get bodyIndexFrameDescription
-            this.bodyIndexFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
-
-
-            // open the reader for the multispouce frames
-            //Für GestureCommands
-            this.multiFrameSourceReader = this.kinectSensor.OpenMultiSourceFrameReader(FrameSourceTypes.Depth | FrameSourceTypes.Color | FrameSourceTypes.BodyIndex | FrameSourceTypes.Body);
-
-
-            // create the colorFrameDescription from the ColorFrameSource using Bgra format
-            FrameDescription colorFrameDescriptionBgra = this.kinectSensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra);
-
-            // create faceBitmap
-            this.faceBitmap = new WriteableBitmap(colorFrameDescriptionBgra.Width, colorFrameDescriptionBgra.Height, 96.0, 96.0, PixelFormats.Bgra32, null);
-
-            // create bodyBitmap
-            this.bodyBitmap = new WriteableBitmap(colorFrameDescriptionBgra.Width, colorFrameDescriptionBgra.Height, 96.0, 96.0, PixelFormats.Bgra32, null);
-
-            // get coordinate mapper
-            this.coordinateMapper = this.kinectSensor.CoordinateMapper;
-
-            //// Handler for frame arrival
-            this.colorFrameReader.FrameArrived += this.Reader_ColorFrameArrived;
-            this.multiFrameSourceReader.MultiSourceFrameArrived += Reader_MultiSourceFrameArrived;
-            //this.multiFrameSourceReader.MultiSourceFrameArrived += this.Reader_FrameArrived;
-
-
-            // open the sensor
-            this.kinectSensor.Open();
-
-            // use the window object as the view model in this simple example
-            this.DataContext = this;
-
-
-
-        }
-
-
-        /// <summary>
-        /// Für GestureCommands
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Reader_MultiSourceFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
-        {
-            var reference = e.FrameReference.AcquireFrame();
-
-
-            // Body
-            using (var frame = reference.BodyFrameReference.AcquireFrame())
-            {
-                if (frame != null)
-                {
-
-
-                    bodies = new Body[frame.BodyFrameSource.BodyCount];
-
-                    frame.GetAndRefreshBodyData(bodies);
-
-                    foreach (var body in bodies)
-                    {
-                        if (body != null)
-                        {
-                            if (body.IsTracked)
-                            {
-                                // Find the joints
-                                Joint handRight = body.Joints[JointType.HandRight];
-                                Joint thumbRight = body.Joints[JointType.ThumbRight];
-
-                                Joint handLeft = body.Joints[JointType.HandLeft];
-                                Joint thumbLeft = body.Joints[JointType.ThumbLeft];                                
-
-                                // Find the hand states
-                                string rightHandState = "-";
-                                string leftHandState = "-";
-
-                                switch (body.HandRightState)
-                                {
-                                    case HandState.Open:
-                                        rightHandState = "Open";
-                                        break;
-                                    case HandState.Closed:
-                                        rightHandState = "Closed";
-                                        break;
-                                    case HandState.Lasso:
-                                        rightHandState = "Lasso";
-                                        break;
-                                    case HandState.Unknown:
-                                        rightHandState = "Unknown...";
-                                        break;
-                                    case HandState.NotTracked:
-                                        rightHandState = "Not tracked";
-                                        break;
-                                    default:
-                                        break;
-                                }
-
-                                switch (body.HandLeftState)
-                                {
-                                    case HandState.Open:
-                                        leftHandState = "Open";
-                                        break;
-                                    case HandState.Closed:
-                                        leftHandState = "Closed";
-                                        break;
-                                    case HandState.Lasso:
-                                        leftHandState = "Lasso";
-                                        break;
-                                    case HandState.Unknown:
-                                        leftHandState = "Unknown...";
-                                        break;
-                                    case HandState.NotTracked:
-                                        leftHandState = "Not tracked";
-                                        break;
-                                    default:
-                                        break;
-                                }
-
-                                //tblRightHandState.Text = rightHandState;
-                                //tblLeftHandState.Text = leftHandState;
-
-                                try
-                                {
-                                    gestureCommands.InitializeMediaPlayerActions(rightHandState, userList);
-                                } catch(Exception ex) {
-                                    MessageBox.Show(ex.Message);
-                                    System.Diagnostics.Debug.WriteLine(ex.StackTrace);
-                                }
-                                
-                                //gestureCommands.LogArea = logArea;
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
+        
 
 
         #region create thumbnail
@@ -690,8 +739,13 @@ namespace FRMC_Kinect
 
             while (ListBox1.SelectedItems.Count > 0)
             {
-                ListBox1.Items.Remove(ListBox1.SelectedItem);
+                ListBox1.Items.Remove(ListBox1.Items);
             }
+
+            //Alle erkannten user löschen
+            userList.Clear();
+
+            
             
             foreach (var modelId in klemon.ErkannteModels)
             {
