@@ -526,25 +526,26 @@ namespace FRMC_Kinect
                             {
                                 // Find the joints
                                 Joint handRight = body.Joints[JointType.HandRight];
-                                Joint thumbRight = body.Joints[JointType.ThumbRight];
-
-                                //Joint handLeft = body.Joints[JointType.HandLeft];
-                                //Joint thumbLeft = body.Joints[JointType.ThumbLeft];                                
+                                Joint thumbRight = body.Joints[JointType.ThumbRight];                             
 
                                 // Find the hand states
                                 string rightHandState = "-";
-                                //string leftHandState = "-";
+
+                                bool isValidGesture = false;
 
                                 switch (body.HandRightState)
                                 {
                                     case HandState.Open:
                                         rightHandState = "Open";
+                                        isValidGesture = true;
                                         break;
                                     case HandState.Closed:
                                         rightHandState = "Closed";
+                                        isValidGesture = true;
                                         break;
                                     case HandState.Lasso:
                                         rightHandState = "Lasso";
+                                        isValidGesture = true;
                                         break;
                                     case HandState.Unknown:
                                         rightHandState = "Unknown...";
@@ -556,33 +557,18 @@ namespace FRMC_Kinect
                                         break;
                                 }
 
-                                //switch (body.HandLeftState)
-                                //{
-                                //    case HandState.Open:
-                                //        leftHandState = "Open";
-                                //        break;
-                                //    case HandState.Closed:
-                                //        leftHandState = "Closed";
-                                //        break;
-                                //    case HandState.Lasso:
-                                //        leftHandState = "Lasso";
-                                //        break;
-                                //    case HandState.Unknown:
-                                //        leftHandState = "Unknown...";
-                                //        break;
-                                //    case HandState.NotTracked:
-                                //        leftHandState = "Not tracked";
-                                //        break;
-                                //    default:
-                                //        break;
-                                //}
 
                                 //tblRightHandState.Text = rightHandState;
                                 //tblLeftHandState.Text = leftHandState;
-                                GestureActionListBox.Text = rightHandState;
+                                
                                 try
                                 {
-                                    gestureCommands.InitializeMediaPlayerActions(rightHandState, userList);
+                                    if (isValidGesture)
+                                    {
+                                        GestureActionListBox.Text = rightHandState;
+                                        gestureCommands.InitializeMediaPlayerActions(rightHandState, userList);
+                                    }
+                                    
                                 }
                                 catch (Exception ex)
                                 {
