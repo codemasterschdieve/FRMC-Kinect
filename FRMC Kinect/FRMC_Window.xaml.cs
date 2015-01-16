@@ -431,7 +431,7 @@ namespace FRMC_Kinect
 
             //ftpup2.scanupload(filename);
             //if(starttimer)
-            if (false)
+            if (starttimer)
             {
                 timerasyncScanSaveLocal.Tick += new EventHandler(executeScanLocalImageTimerAsynch);
                 timerasyncScanSaveLocal.Interval = new TimeSpan(0, 0, 8);
@@ -547,16 +547,9 @@ namespace FRMC_Kinect
                                         rightHandState = "Lasso";
                                         isValidGesture = true;
                                         break;
-                                    case HandState.Unknown:
-                                        rightHandState = "Unknown...";
-                                        break;
-                                    case HandState.NotTracked:
-                                        rightHandState = "Not tracked";
-                                        break;
                                     default:
                                         break;
                                 }
-
 
                                 //tblRightHandState.Text = rightHandState;
                                 //tblLeftHandState.Text = leftHandState;
@@ -565,8 +558,9 @@ namespace FRMC_Kinect
                                 {
                                     if (isValidGesture)
                                     {
-                                        GestureActionListBox.Text = rightHandState;
-                                        gestureCommands.InitializeMediaPlayerActions(rightHandState, userList);
+                                        GestureActionTextBlock.Text = rightHandState;
+                                        string currentCommmand = gestureCommands.InitializeMediaPlayerActions(rightHandState, userList);
+                                        CurrentGestureTextBlock.Text = currentCommmand;
                                     }
                                     
                                 }
@@ -575,7 +569,6 @@ namespace FRMC_Kinect
                                     MessageBox.Show(ex.Message);
                                     System.Diagnostics.Debug.WriteLine(ex.StackTrace);
                                 }
-
                                 //gestureCommands.LogArea = logArea;
                             }
                         }
@@ -716,11 +709,6 @@ namespace FRMC_Kinect
         }
         #endregion
 
-
-        
-
-
-
         public void findUserIdbyModelId() {
 
             while (ListBox1.SelectedItems.Count > 0)
@@ -730,17 +718,13 @@ namespace FRMC_Kinect
 
             //Alle erkannten user löschen
             userList.Clear();
-
-            
-            
+                      
             foreach (var modelId in klemon.ErkannteModels)
             {
                 User user = new User();
-
                 user.ModelId = modelId;
-
-                user = mySqlController.findUserWithGenreByModelId(user);
-            
+                user = mySqlController.findUserWithGenreByModelId(user);  
+         
                 userList.Add(user);
 
                 ListBox1.Items.Add(user.Vorname + " " + user.Nachname);
@@ -749,16 +733,27 @@ namespace FRMC_Kinect
 
         public void test_Click(Object sender, RoutedEventArgs args)
         {
-            User user = new User();
-            user.ModelId = "0b3dba48-9779-421f-b06c-743e06c21e15";
-            user = mySqlController.findUserWithGenreByModelId(user);
+            //GenreFinder genreFinder = new GenreFinder();
+            List<string> genresUser1 = new List<string>() { "hip-hop", "rock", "classic" };
+            List<string> genresUser2 = new List<string>() { "rock", "electro", "funk", "classic" };
 
-            string genreIdsString = string.Join(",", user.MusicGenres.ToArray());
-            string genreNamesString = string.Join(",", user.MusicGenreNames.ToArray());
+            List<List<string>> genreLists = new List<List<string>>();
+            genreLists.Add(genresUser1);
+            genreLists.Add(genresUser2);
 
-            MessageBox.Show("user: " + user.Vorname + " ids: " + genreIdsString + " genre names: " + genreNamesString);
+            string match = GenreFinder.FindMatch(genreLists);
+
+            MessageBox.Show(match);
+
+            //User user = new User();
+            //user.ModelId = "0b3dba48-9779-421f-b06c-743e06c21e15";
+            //user = mySqlController.findUserWithGenreByModelId(user);
+
+            //string genreIdsString = string.Join(",", user.MusicGenres.ToArray());
+            //string genreNamesString = string.Join(",", user.MusicGenreNames.ToArray());
+
+            //MessageBox.Show("user: " + user.Vorname + " ids: " + genreIdsString + " genre names: " + genreNamesString);
         }       
-
     }
         
 }   

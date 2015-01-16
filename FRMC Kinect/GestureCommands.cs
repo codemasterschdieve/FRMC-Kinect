@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace FRMC_Kinect
 {
@@ -71,29 +72,34 @@ namespace FRMC_Kinect
                 //todo 
                 if (!isPlaying)
                 {
-                    //List<List<string>> currentUserGenres = new List<List<string>>(); ;
-                    //foreach(User user in currentUserList) {
-                    //    currentUserGenres.Add(user.MusicGenreNames);
-                    //}
+                    List<List<string>> currentUserGenres = new List<List<string>>(); ;
+                    foreach (User user in currentUserList)
+                    {
+                        currentUserGenres.Add(user.MusicGenreNames);
+                    }
 
-                    //List<string> genreToPlay = GenreFinder.FindMatch(currentUserGenres);
+                    string genreToPlay = GenreFinder.FindMatch(currentUserGenres);
 
-                    //Random rnd = new Random();
-                    //int randomGenreIndex = rnd.Next(0, genreToPlay.Count);
-
-                    //string randomGenre = genreToPlay.ElementAt(randomGenreIndex);
-
-                    mediaPlayer.PlayGenrePlaylist("Rock");
-                    logMessage = "Start";
-                    commandModeActive = false;
-                    isPlaying = true;
+                    if (genreToPlay != null)
+                    {
+                        mediaPlayer.PlayGenrePlaylist(genreToPlay);
+                        logMessage = "Start Media Player mit Genre: " + genreToPlay;
+                        commandModeActive = false;
+                        isPlaying = true;
+                    }
+                    else
+                    {
+                        logMessage = "Kein Genre gefunden";
+                        //MessageBox.Show(logMessage);
+                    }
+                    
 
                 }
             }
             else if (commandModeActive && isPlaying && currentGestureAction == "Open")
             {
                 mediaPlayer.Play();
-                logMessage = "Play";
+                logMessage = "Play Media Player";
                 commandModeActive = false;
                 isPlaying = true;
             }
@@ -110,7 +116,7 @@ namespace FRMC_Kinect
                 mediaPlayer.Pause();
                 isPlaying = false;
                 isPaused = true;
-                logMessage = "Pause";
+                logMessage = "Pause Media Player";
                 commandModeActive = false;
             }
         }

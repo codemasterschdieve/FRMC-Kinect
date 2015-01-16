@@ -118,8 +118,10 @@
              
                 </ListBox>
 
-                <TextBlock Name="GestureActionListBox">
+                <TextBlock Name="GestureActionTextBlock">
 
+                </TextBlock>
+                <TextBlock Name="CurrentGestureTextBlock">
 
                 </TextBlock>
 
