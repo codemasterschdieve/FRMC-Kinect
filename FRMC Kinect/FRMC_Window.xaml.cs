@@ -30,6 +30,7 @@ using System.Windows.Threading;
 
 
 
+
 namespace FRMC_Kinect
 {
  
@@ -176,30 +177,6 @@ namespace FRMC_Kinect
         /// </summary>
         List<User> userList = new List<User>();
         
-
-        /// <summary>
-        /// Returns bodyBitmap as image source
-        /// </summary>
-        public ImageSource kinectImageSource
-        {
-            get
-            {
-                return this.bodyBitmap;
-            }
-        }
-
-        /// <summary>
-        /// Returns faceImage as image source
-        /// </summary>
-        public ImageSource faceImageSource
-        {
-            get
-            {
-                return this.faceImage;
-            }
-        }
-
-
         /// <summary>
         /// Instantiate timer for exectue functions in time intervalls
         /// </summary>
@@ -235,6 +212,52 @@ namespace FRMC_Kinect
         /// INotifyPropertyChangedPropertyChanged event to allow window controls to bind to changeable data
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        BitmapImage currentGestureImage = new BitmapImage(new Uri(@"/Images/handup.png", UriKind.Relative));
+
+        /// <summary>
+        /// Returns bodyBitmap as image source
+        /// </summary>
+        public ImageSource kinectImageSource
+        {
+            get
+            {
+                return this.bodyBitmap;
+            }
+        }
+
+        /// <summary>
+        /// Returns faceImage as image source
+        /// </summary>
+        public ImageSource faceImageSource
+        {
+            get
+            {
+                return this.faceImage;
+            }
+        }
+
+        /// <summary>
+        /// Returns faceImage as image source
+        /// </summary>
+        public BitmapImage GestureImageSource
+        {
+            get
+            {
+                return currentGestureImage;
+            }
+    
+        }
+
+
+        
+
+
+            
+
+        
+
+        
 
         #endregion
 
@@ -351,7 +374,8 @@ namespace FRMC_Kinect
             this.coordinateMapper = this.kinectSensor.CoordinateMapper;
 
             //// Handler for frame arrival
-            this.colorFrameReader.FrameArrived += this.Reader_ColorFrameArrived;
+            //this.colorFrameReader.FrameArrived += this.Reader_ColorFrameArrived;
+
             this.multiFrameSourceReader.MultiSourceFrameArrived += Reader_MultiSourceFrameArrived;
             //this.multiFrameSourceReader.MultiSourceFrameArrived += this.Reader_FrameArrived;
 
@@ -395,59 +419,59 @@ namespace FRMC_Kinect
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Reader_ColorFrameArrived(object sender, ColorFrameArrivedEventArgs e)
-        {
-            // ColorFrame is IDisposable
-            using (ColorFrame colorFrame = e.FrameReference.AcquireFrame())
-            {
-                if (colorFrame != null)
-                {
-                    FrameDescription colorFrameDescription = colorFrame.FrameDescription;
+        //private void Reader_ColorFrameArrived(object sender, ColorFrameArrivedEventArgs e)
+        //{
+        //    // ColorFrame is IDisposable
+        //    using (ColorFrame colorFrame = e.FrameReference.AcquireFrame())
+        //    {
+        //        if (colorFrame != null)
+        //        {
+        //            FrameDescription colorFrameDescription = colorFrame.FrameDescription;
 
-                    using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
-                    {
-                        this.bodyBitmap.Lock();
+        //            using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
+        //            {
+        //                this.bodyBitmap.Lock();
 
-                        // verify data and write the new color frame data to the display bitmap
-                        if ((colorFrameDescription.Width == this.bodyBitmap.PixelWidth) && (colorFrameDescription.Height == this.bodyBitmap.PixelHeight))
-                        {
-                            colorFrame.CopyConvertedFrameDataToIntPtr(
-                                this.bodyBitmap.BackBuffer,
-                                (uint)(colorFrameDescription.Width * colorFrameDescription.Height * 4),
-                                ColorImageFormat.Bgra);
+        //                // verify data and write the new color frame data to the display bitmap
+        //                if ((colorFrameDescription.Width == this.bodyBitmap.PixelWidth) && (colorFrameDescription.Height == this.bodyBitmap.PixelHeight))
+        //                {
+        //                    colorFrame.CopyConvertedFrameDataToIntPtr(
+        //                        this.bodyBitmap.BackBuffer,
+        //                        (uint)(colorFrameDescription.Width * colorFrameDescription.Height * 4),
+        //                        ColorImageFormat.Bgra);
 
-                            this.bodyBitmap.AddDirtyRect(new Int32Rect(0, 0, this.bodyBitmap.PixelWidth, this.bodyBitmap.PixelHeight));
+        //                    this.bodyBitmap.AddDirtyRect(new Int32Rect(0, 0, this.bodyBitmap.PixelWidth, this.bodyBitmap.PixelHeight));
 
-                        }
+        //                }
 
-                        this.bodyBitmap.Unlock();
-                    }
-                }
-            }
+        //                this.bodyBitmap.Unlock();
+        //            }
+        //        }
+        //    }
 
 
-            filename = "C:\\Kinect\\scan.jpg";
-            //CreateThumbnail2(filename, bodyBitmap);
+        //    filename = "C:\\Kinect\\scan.jpg";
+        //    //CreateThumbnail2(filename, bodyBitmap);
 
-            //ftpup2.scanupload(filename);
-            //if(starttimer)
-            if (starttimer)
-            {
-                timerasyncScanSaveLocal.Tick += new EventHandler(executeScanLocalImageTimerAsynch);
-                timerasyncScanSaveLocal.Interval = new TimeSpan(0, 0, 8);
-                timerasyncScanSaveLocal.Start();
+        //    //ftpup2.scanupload(filename);
+        //    //if(starttimer)
+        //    if (false)
+        //    {
+        //        timerasyncScanSaveLocal.Tick += new EventHandler(executeScanLocalImageTimerAsynch);
+        //        timerasyncScanSaveLocal.Interval = new TimeSpan(0, 0, 8);
+        //        timerasyncScanSaveLocal.Start();
 
-                timerUpload.Tick += new EventHandler(executeUploadTimer);
-                timerUpload.Interval = new TimeSpan(0, 0, 15);
-                timerUpload.Start();
+        //        timerUpload.Tick += new EventHandler(executeUploadTimer);
+        //        timerUpload.Interval = new TimeSpan(0, 0, 15);
+        //        timerUpload.Start();
 
-                timerasyncRecognizeUserFace.Tick += new EventHandler(exectuteRecognizeUserFaceTimerAsync);
-                timerasyncRecognizeUserFace.Interval = new TimeSpan(0, 0, 21);
-                timerasyncRecognizeUserFace.Start();
-                this.starttimer = false;
-            }
+        //        timerasyncRecognizeUserFace.Tick += new EventHandler(exectuteRecognizeUserFaceTimerAsync);
+        //        timerasyncRecognizeUserFace.Interval = new TimeSpan(0, 0, 21);
+        //        timerasyncRecognizeUserFace.Start();
+        //        this.starttimer = false;
+        //    }
 
-        }
+        //}
         #endregion
 
         /// <summary>
@@ -492,7 +516,7 @@ namespace FRMC_Kinect
 
                 //ftpup2.scanupload(filename);
                 //if(starttimer)
-                if (false)
+                if (starttimer)
                 {
                     timerasyncScanSaveLocal.Tick += new EventHandler(executeScanLocalImageTimerAsynch);
                     timerasyncScanSaveLocal.Interval = new TimeSpan(0, 0, 8);
@@ -550,17 +574,20 @@ namespace FRMC_Kinect
                                     default:
                                         break;
                                 }
-
-                                //tblRightHandState.Text = rightHandState;
-                                //tblLeftHandState.Text = leftHandState;
                                 
                                 try
                                 {
                                     if (isValidGesture)
                                     {
-                                        GestureActionTextBlock.Text = rightHandState;
                                         string currentCommmand = gestureCommands.InitializeMediaPlayerActions(rightHandState, userList);
                                         CurrentGestureTextBlock.Text = currentCommmand;
+                                        ChangeGestureImage(rightHandState);
+
+                                    }
+                                    else
+                                    {
+                                        CurrentGestureTextBlock.Text = "Keine Geste erkannt";
+                                        currentGestureImage = null;
                                     }
                                     
                                 }
@@ -576,6 +603,29 @@ namespace FRMC_Kinect
                 }
             }
 
+        }
+
+        private void ChangeGestureImage(string gesture)
+        {
+            var binding = new Binding { Source = currentGestureImage };
+            GestureIcon.SetBinding(System.Windows.Controls.Image.SourceProperty, binding);
+            
+
+            switch (gesture)
+            {
+                case "Open":
+                    currentGestureImage = new BitmapImage(new Uri(@"/Images/FlacheHand.png", UriKind.Relative));
+                    break;
+                case "Closed":
+                    currentGestureImage = new BitmapImage(new Uri(@"/Images/StopGesture.png", UriKind.Relative));
+                    break;
+                case "Lasso":
+                    currentGestureImage = new BitmapImage(new Uri(@"/Images/handup.png", UriKind.Relative));
+                    break;
+                default:
+                    currentGestureImage = null;
+                    break;
+            }
         }
 
         #region time triggered functions

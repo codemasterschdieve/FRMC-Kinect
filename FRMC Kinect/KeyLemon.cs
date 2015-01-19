@@ -94,7 +94,7 @@ namespace FRMC_Kinect
                                         result_for_face_1["score"]);
 
 
-                    if ((result_for_face_1["score"]) >= 25)
+                    if ((result_for_face_1["score"]) >= 40)
                     {
                         erkannteModels.Add(result_for_face_1["model_id"]);
 

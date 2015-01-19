@@ -90,7 +90,7 @@ namespace FRMC_Kinect
                     else
                     {
                         logMessage = "Kein Genre gefunden";
-                        //MessageBox.Show(logMessage);
+                        MessageBox.Show(logMessage);
                     }
                     
 

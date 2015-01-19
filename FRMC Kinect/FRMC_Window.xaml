@@ -8,40 +8,33 @@
 
 
     <StackPanel>
-        
-       
-        
 
-         
+        <StackPanel Height="350">
 
+            <Image Source="Images\Logo_3.png" Name="FRMCKinectLogo"/>
+            <Line Stroke="Black" Stretch="Fill" X2="1" Margin="0,20px,0,20px"/>
 
-            <StackPanel Height="350">
-
-                <Image Source="Images\Logo_3.png" Name="FRMCKinectLogo"/>
-                <Line Stroke="Black" Stretch="Fill" X2="1" Margin="0,20px,0,20px"/>
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Button x:Name="NavigateMainwindow" Content="Zur Startseite"  HorizontalAlignment="Left" TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="350px,0,0,0" Grid.Column="0" Click="navigateBtnMainWindow_Click"/>
-                    <Button x:Name="NavigateRegister"  Content="Zur Registration" HorizontalAlignment="Right"  TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="100px,0,0,0" Grid.Column="1" Click="navigateBtnRegister_Click"/>
-                <Button x:Name="Test"  Content="Test" HorizontalAlignment="Right"  TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="100px,0,0,0" Grid.Column="2" Click="test_Click"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="NavigateMainwindow" Content="Zur Startseite"  HorizontalAlignment="Left" TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="350px,0,0,0" Grid.Column="0" Click="navigateBtnMainWindow_Click"/>
+                <Button x:Name="NavigateRegister"  Content="Zur Registration" HorizontalAlignment="Right"  TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="100px,0,0,0" Grid.Column="1" Click="navigateBtnRegister_Click"/>
 
 
             </Grid>
-                <Line Stroke="Black" Stretch="Fill" X2="1" Margin="0,20px,0,20px"/>
-            </StackPanel>
-        
-        
-        
+            <Line Stroke="Black" Stretch="Fill" X2="1" Margin="0,20px,0,20px"/>
+        </StackPanel>
+
         <Grid>
             <Grid.ColumnDefinitions>
+
                 <ColumnDefinition Width="400"/>
                 <ColumnDefinition Width="400"/>
-                
+                <ColumnDefinition Width="400"/>
+
 
             </Grid.ColumnDefinitions>
 
@@ -111,33 +104,43 @@
 
 
 
-            <StackPanel Grid.Column="2" Grid.Row="0"  >
-
+            <StackPanel Grid.Column="1" Grid.Row="0"  >
+                <Label x:Name="Personen" Grid.Row="1" TextBlock.TextAlignment="Center" FontSize="20px" Content="Erkannte Personen:"/>
                 <ListBox Name="ListBox1">
 
-             
                 </ListBox>
 
-                <TextBlock Name="GestureActionTextBlock">
+ 
 
-                </TextBlock>
+                <Label x:Name="Genre" Grid.Row="1" TextBlock.TextAlignment="Center" FontSize="20px" Content="Status:"/>
                 <TextBlock Name="CurrentGestureTextBlock">
 
                 </TextBlock>
 
 
-                <Label x:Name="huhu"  TextBlock.TextAlignment="Center" FontSize="20px" Content="Huhu"/>
-
-                    </StackPanel>
-
-                </Grid>
-
-
-            
 
 
 
-     
+
+
+            </StackPanel>
+
+
+            <StackPanel Grid.Column="2"  >
+                <Label x:Name="Modus" Grid.Row="1" TextBlock.TextAlignment="Center" FontSize="20px" Content="Modus"/>
+                <Viewbox>
+                    <Image x:Name="GestureIcon" Source="{Binding GestureImageSource}"/>
+                </Viewbox>
+            </StackPanel>
+
+        </Grid>
+
+
+
+
+
+
+
 
 
     </StackPanel>
