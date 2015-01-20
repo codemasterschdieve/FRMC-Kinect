@@ -32,6 +32,9 @@ namespace FRMC_Kinect
 
         public void keyLemonModelCreation(string userId, string vorname, string nachname, int userId2)
         {
+            // To read back the model at a later time:
+            user.UserId = userId2;
+
             // We can train using URLs of images
             String[] penelope_urls = new String[1]{
             "http://www.frmc.wi-stuttgart.de/scan/"  + userId + "model.jpg" };
@@ -44,25 +47,33 @@ namespace FRMC_Kinect
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.StackTrace);
+                MessageBox.Show(ex.Message);
+                Console.WriteLine(ex.StackTrace);
             }
-
-            // To read back the model at a later time:
-            user.UserId = userId2;
-
+            
             try
             {
+                if (response == null)
+                {
+                    mySqlController.DeleteUserByUserId(user);
+                    MessageBox.Show("Gesichtserkennungsoftware Keylemon funktioniert nicht. User nicht registriert");
+                }
+                else
+                {
+                    responesModelId = api.GetModel(response["model_id"]);
 
-
-                responesModelId = api.GetModel(response["model_id"]);
+                    user.ModelId = responesModelId["model_id"];
+                    mySqlController.updateUser(user);
+                }                             
+                
             }
             catch (Exception exc)
             {
-                System.Diagnostics.Debug.WriteLine(exc.Message);
+                mySqlController.DeleteUserByUserId(user);
+                MessageBox.Show("Gesichtserkennungsfehler. User nicht registriert: " + response2["errors"]);
+                Console.WriteLine(exc.StackTrace);
             }
-            user.ModelId = responesModelId["model_id"];
-            mySqlController.updateUser(user);
-
+            
         }
 
 
@@ -94,7 +105,7 @@ namespace FRMC_Kinect
                                         result_for_face_1["score"]);
 
 
-                    if ((result_for_face_1["score"]) >= 40)
+                    if ((result_for_face_1["score"]) >= 25)
                     {
                         erkannteModels.Add(result_for_face_1["model_id"]);
 

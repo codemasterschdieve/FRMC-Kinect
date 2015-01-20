@@ -12,8 +12,7 @@ namespace FRMC_Kinect
     public  class MySqlController
     {
 
-        private  MySqlConnection connection;
-        List<string> model_ids = new List<string>();
+        private  MySqlConnection connection;        
 
 
         public MySqlController() {
@@ -239,6 +238,8 @@ namespace FRMC_Kinect
 
         public List<string> findAllModelIdFromDb(User user) {
 
+            List<string> model_ids = new List<string>();
+
             openMySqlConnection();
             MySqlCommand cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT ModelId FROM User ";
@@ -263,6 +264,16 @@ namespace FRMC_Kinect
         private string GetDBString(string SqlFieldName, MySqlDataReader Reader)
         {
             return Reader[SqlFieldName].Equals(DBNull.Value) ? String.Empty : Reader.GetString(SqlFieldName);
+        }
+
+        public void DeleteUserByUserId(User user)
+        {
+            openMySqlConnection();
+            MySqlCommand cmd = connection.CreateCommand();
+            string query = "DELETE FROM `User` WHERE UserId = " + user.UserId;
+            cmd.CommandText = query ;
+            cmd.Prepare();
+            cmd.ExecuteNonQuery();
         }
 
     }

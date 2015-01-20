@@ -92,8 +92,16 @@ namespace FRMC_Kinect
         {
             //IWMPPlaylistArray myPlaylist = Player.playlistCollection.getByName("Kinect");
             IWMPPlaylist pl = Player.mediaCollection.getByGenre(genre);
-            Player.currentPlaylist = pl;
-            Player.controls.play();
+            if (pl.count > 1)
+            {
+                Player.currentPlaylist = pl;
+                Player.controls.play();
+            }
+            else
+            {
+                MessageBox.Show("Keine Playlist gefunden");
+            }
+            
 
 
             //IWMPMedia objMedia = Player.currentMedia;

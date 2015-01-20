@@ -213,7 +213,7 @@ namespace FRMC_Kinect
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        BitmapImage currentGestureImage = new BitmapImage(new Uri(@"/Images/handup.png", UriKind.Relative));
+        BitmapImage currentGestureImage;
 
         /// <summary>
         /// Returns bodyBitmap as image source
@@ -248,14 +248,6 @@ namespace FRMC_Kinect
             }
     
         }
-
-
-        
-
-
-            
-
-        
 
         
 
@@ -390,89 +382,8 @@ namespace FRMC_Kinect
 
         }
 
-        #region mysql connection
-        ///// <summary>
-        ///// Generates a connection string
-        ///// </summary>
-        ///// <param name="server">The name or IP of the server where the MySQL server is running</param>
-        ///// <param name="databaseName">The name of the database </param>
-        ///// <param name="user">The user id - root if there are no new users which have been created</param>
-        ///// <param name="pass">The user's password</param>
-        ///// <returns></returns>
-        //public static string CreateConnStr(string server, string databaseName, string user, string pass)
-        //{
-        //    //build the connection string
-        //    string connStr = "server=" + server + ";database=" + databaseName + ";uid=" +
-        //        user + ";password=" + pass + ";";
-
-        //    //return the connection string
-        //    return connStr;
-        //}
-        #endregion
 
        
-
-
-        #region ColorFrameArrived Handler to get bodyBitmap
-        /// <summary>
-        /// Triggered for each color frame to get a writable bitmap for each color frame
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void Reader_ColorFrameArrived(object sender, ColorFrameArrivedEventArgs e)
-        //{
-        //    // ColorFrame is IDisposable
-        //    using (ColorFrame colorFrame = e.FrameReference.AcquireFrame())
-        //    {
-        //        if (colorFrame != null)
-        //        {
-        //            FrameDescription colorFrameDescription = colorFrame.FrameDescription;
-
-        //            using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
-        //            {
-        //                this.bodyBitmap.Lock();
-
-        //                // verify data and write the new color frame data to the display bitmap
-        //                if ((colorFrameDescription.Width == this.bodyBitmap.PixelWidth) && (colorFrameDescription.Height == this.bodyBitmap.PixelHeight))
-        //                {
-        //                    colorFrame.CopyConvertedFrameDataToIntPtr(
-        //                        this.bodyBitmap.BackBuffer,
-        //                        (uint)(colorFrameDescription.Width * colorFrameDescription.Height * 4),
-        //                        ColorImageFormat.Bgra);
-
-        //                    this.bodyBitmap.AddDirtyRect(new Int32Rect(0, 0, this.bodyBitmap.PixelWidth, this.bodyBitmap.PixelHeight));
-
-        //                }
-
-        //                this.bodyBitmap.Unlock();
-        //            }
-        //        }
-        //    }
-
-
-        //    filename = "C:\\Kinect\\scan.jpg";
-        //    //CreateThumbnail2(filename, bodyBitmap);
-
-        //    //ftpup2.scanupload(filename);
-        //    //if(starttimer)
-        //    if (false)
-        //    {
-        //        timerasyncScanSaveLocal.Tick += new EventHandler(executeScanLocalImageTimerAsynch);
-        //        timerasyncScanSaveLocal.Interval = new TimeSpan(0, 0, 8);
-        //        timerasyncScanSaveLocal.Start();
-
-        //        timerUpload.Tick += new EventHandler(executeUploadTimer);
-        //        timerUpload.Interval = new TimeSpan(0, 0, 15);
-        //        timerUpload.Start();
-
-        //        timerasyncRecognizeUserFace.Tick += new EventHandler(exectuteRecognizeUserFaceTimerAsync);
-        //        timerasyncRecognizeUserFace.Interval = new TimeSpan(0, 0, 21);
-        //        timerasyncRecognizeUserFace.Start();
-        //        this.starttimer = false;
-        //    }
-
-        //}
-        #endregion
 
         /// <summary>
         /// Für GestureCommands
@@ -771,13 +682,14 @@ namespace FRMC_Kinect
                       
             foreach (var modelId in klemon.ErkannteModels)
             {
-                User user = new User();
-                user.ModelId = modelId;
-                user = mySqlController.findUserWithGenreByModelId(user);  
-         
-                userList.Add(user);
+                User detectedUser = new User();
+                detectedUser.ModelId = modelId;
+                detectedUser = mySqlController.findUserWithGenreByModelId(detectedUser);
 
-                ListBox1.Items.Add(user.Vorname + " " + user.Nachname);
+                userList.Add(detectedUser);
+                ListBox1.Items.Add(detectedUser.Vorname + " " + detectedUser.Nachname);
+                            
+
             }          
         }
 

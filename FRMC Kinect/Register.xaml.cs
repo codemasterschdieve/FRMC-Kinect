@@ -696,21 +696,11 @@ namespace FRMC_Kinect
                 {
              
 
-
-                    //cmd.CommandText = "SELECT Email FROM User WHERE Email='" + Emailtextbox.Text + "'";
-                    //cmd.Prepare();
-                    //cmd.ExecuteNonQuery();
-
-
-                  
-
                
 
                     User user = new User();
 
-                    
-
-                  
+              
 
                     user.Vorname = Firstnametextbox.Text;
                     user.Nachname = Lastnametextbox.Text;
@@ -727,9 +717,6 @@ namespace FRMC_Kinect
                         MessageBox.Show("Die Emailadresse wird bereits verwendet. Bitte verwenden Sie eine andere");
                         return;
                     }
-
-           
-                    
 
 
 
@@ -824,9 +811,11 @@ namespace FRMC_Kinect
            //         klemon.RecognizeUserFace();
 
                     Thread.Sleep(2000);
+                    this.Close(); //only if you want to close the current form
+
                     var newwindow = new FRMC_Window(); //create your new form.
                     newwindow.Show(); //show the new form.
-                    this.Close(); //only if you want to close the current form
+                    
 
 
                     }
