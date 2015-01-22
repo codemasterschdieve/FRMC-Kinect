@@ -583,6 +583,7 @@ namespace FRMC_Kinect
 
                 klemon.RecognizeUserFace();
                 findUserIdbyModelId();
+                findUserIdbyModelId2();
 
                 timerasyncScanSaveLocal.Start();
                 timerUpload.Start();
@@ -670,15 +671,64 @@ namespace FRMC_Kinect
         }
         #endregion
 
-        public void findUserIdbyModelId() {
 
-            while (ListBox1.SelectedItems.Count > 0)
+        public void findUserIdbyModelId2()
+        {
+            List<string> vornachuser = new List<string>();
+
+            if (Listviewscore.Items.Count > 0)
             {
-                ListBox1.Items.Remove(ListBox1.Items);
+
+                Listviewscore.Items.Clear();
             }
 
             //Alle erkannten user löschen
-            userList.Clear();
+           
+
+            foreach (var modelId in klemon.Allemodelids)
+            {
+                User detectedUser2 = new User();
+                detectedUser2.ModelId = modelId;
+                detectedUser2 = mySqlController.findUserWithGenreByModelId(detectedUser2);
+
+
+                vornachuser.Add(detectedUser2.Vorname + " " + detectedUser2.Nachname);
+
+
+
+            }
+            for(int i=0;i< klemon.Score.Count; i++)
+            {
+                System.Diagnostics.Debug.WriteLine(vornachuser.ElementAt(i));
+
+                Listviewscore.Items.Add(vornachuser.ElementAt(i) + " Score:" + klemon.Score.ElementAt(i).ToString());
+                //if(klemon.Score.ElementAt(i) > 35)
+                //{
+                //    Listviewscore.Background = System.Windows.Media.Brushes.Green;
+                //}
+                //else
+                //{
+                //    Listviewscore.Background = System.Windows.Media.Brushes.Red;
+                //}
+
+            }
+
+        }   
+
+        public void findUserIdbyModelId() {
+
+            //while (ListBox1.Items.Count > 0)
+            //{
+            //    ListBox1.Items.Remove(ListBox1.Items);
+            //}
+
+            if (ListBox1.Items.Count > 0){
+
+                ListBox1.Items.Clear();
+            }
+
+            //Alle erkannten user löschen
+              userList.Clear();
                       
             foreach (var modelId in klemon.ErkannteModels)
             {
@@ -688,7 +738,8 @@ namespace FRMC_Kinect
 
                 userList.Add(detectedUser);
                 ListBox1.Items.Add(detectedUser.Vorname + " " + detectedUser.Nachname);
-                            
+                
+                
 
             }          
         }

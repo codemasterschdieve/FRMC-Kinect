@@ -18,13 +18,38 @@ namespace FRMC_Kinect
         MySqlController mySqlController = new MySqlController();
         KLAPI api = new KLAPI("Tobi0604", "qUDuBnzvYCJsxcDD4nnyHWCtiHbwU7rmGxHdh8RXbcOjN24m2TJcDI", "https://api.keylemon.com");
         User user = new User();
+
+        private List<string> allemodelids = new List<string>();
+
+        
+        private List<int> score = new List<int>();
+
         List<string> erkannteModels = new List<string>();
 
+
+
+        public List<string> Allemodelids
+        {
+            get { return allemodelids; }
+            set { allemodelids = value; }
+        }
+
+
         public List<string> ErkannteModels
+        
+
         {
             get { return erkannteModels; }
             set { erkannteModels = value; }
         }
+
+
+        public List<int> Score
+        {
+            get { return score; }
+            set { score = value; }
+        }
+
 
         dynamic response;
         dynamic response2;
@@ -83,6 +108,11 @@ namespace FRMC_Kinect
             {
                 //Alte Models Löschen
                 ErkannteModels.Clear();
+                allemodelids.Clear();
+                score.Clear();
+
+
+
 
                 var model_ids = mySqlController.findAllModelIdFromDb(user);
 
@@ -91,7 +121,7 @@ namespace FRMC_Kinect
                     // Then to do a recognition test against this model:
                     // here, we're doing 1 image against 1 model but it's
                     // possible to do n images against n models.
-
+               
                     string[] my_image_to_test = new string[] { "http://www.frmc.wi-stuttgart.de/scan/scan.jpg" };
 
 
@@ -104,15 +134,24 @@ namespace FRMC_Kinect
                                        result_for_face_1["model_id"],
                                         result_for_face_1["score"]);
 
+                   allemodelids.Add(result_for_face_1["model_id"]);
+
+
+
+                   score.Add(result_for_face_1["score"]);
+                    
+                  
+                    
 
                     if ((result_for_face_1["score"]) >= 25)
                     {
+                        
                         erkannteModels.Add(result_for_face_1["model_id"]);
-
                     }
 
-
+                  
                 }
+               
 
             }
             catch (Exception ex)

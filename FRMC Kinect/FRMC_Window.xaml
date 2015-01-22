@@ -117,7 +117,9 @@
 
                 </TextBlock>
 
-
+                <Label x:Name="Personen2" Grid.Row="1" TextBlock.TextAlignment="Center" FontSize="20px" Content="Gespreicherte Personen mit Score:"/>
+                <ListView x:Name="Listviewscore"></ListView>
+                
 
 
 
