@@ -185,17 +185,17 @@ namespace FRMC_Kinect
         /// <summary>
         /// Instantiate timer for exectue functions in time intervalls
         /// </summary>
-        DispatcherTimer timerasyncRecognizeUserFace = new DispatcherTimer();
+        DispatcherTimer timerRecognizeUserFace = new DispatcherTimer();
 
         // <summary>
         /// Instantiate timer for exectue functions in time intervalls
         /// </summary>
-        DispatcherTimer timerasyncScanSaveLocal= new DispatcherTimer();
+        DispatcherTimer timerScanSaveLocal= new DispatcherTimer();
 
         /// <summary>
         /// Starting timer flag
         /// </summary>
-        bool starttimer = true;
+        bool starttimer = false;
 
         /// <summary>
         /// Declare filename path
@@ -260,44 +260,6 @@ namespace FRMC_Kinect
         /// </summary>
         public FRMC_Window()
         {
-
-          
-
-
-             // Connect to MySQL Database
-
-                    //generate the connection string
-            //        string connStr = CreateConnStr("www.wi-stuttgart.de", "d01c6657", "d01c6657", "hdm123!");
-
-            //        //create a MySQL connection with a query string
-            //        MySqlConnection connection = new MySqlConnection(connStr);
-
-            //        //open the connection
-            //        connection.Open();
-
-            //        MySqlCommand cmd = connection.CreateCommand();
-
-            //cmd.CommandText="SELECT Picture FROM User WHERE UserId='17'";
-            //cmd.Prepare();
-            //var imageData = cmd.ExecuteNonQuery();
-            //System.Diagnostics.Debug.WriteLine("--> "+imageData.GetType());
-           
-
-     //       KLAPI api = new KLAPI("tobi0604@me.com", "qwa1qwa1", "https://api.keylemon.com");
-
-     //       // Create a model using the URLs, the data and the face_list
-     //dynamic response = api.CreateFaceModel(null, new byte[1][] { imageData2 }, null, "Tobi Model");
-
-
-     //       // To read back the model at a later time:
-     //      response = api.GetModel(response["model_id"]);
-
-     //       // And delete the model:
-     //       response = api.DeleteModel(response["model_id"]);
-
-
-           
-
 
 
             InitializeComponent();
@@ -378,6 +340,17 @@ namespace FRMC_Kinect
             // use the window object as the view model in this simple example
             this.DataContext = this;
 
+            /**********************************************************************************************
+             * Timer initialisieren
+             * ********************************************************************************************/
+            timerScanSaveLocal.Tick += new EventHandler(executeScanLocalImageTimerAsynch);
+            timerScanSaveLocal.Interval = new TimeSpan(0, 0, 1);
+   
+            timerUpload.Tick += new EventHandler(executeUploadTimerAsynch);
+            timerUpload.Interval = new TimeSpan(0, 0, 4);
+
+            timerRecognizeUserFace.Tick += new EventHandler(exectuteRecognizeUserFaceTimerAsync);
+            timerRecognizeUserFace.Interval = new TimeSpan(0, 0, 10);
 
 
         }
@@ -426,20 +399,16 @@ namespace FRMC_Kinect
                 //CreateThumbnail2(filename, bodyBitmap);
 
                 //ftpup2.scanupload(filename);
-                //if(starttimer)
+                
+                //Timer Starten wenn der Scan Button gedrückt wurde
                 if (starttimer)
                 {
-                    timerasyncScanSaveLocal.Tick += new EventHandler(executeScanLocalImageTimerAsynch);
-                    timerasyncScanSaveLocal.Interval = new TimeSpan(0, 0, 8);
-                    timerasyncScanSaveLocal.Start();
+                    timerScanSaveLocal.Start();
 
-                    timerUpload.Tick += new EventHandler(executeUploadTimer);
-                    timerUpload.Interval = new TimeSpan(0, 0, 15);
                     timerUpload.Start();
 
-                    timerasyncRecognizeUserFace.Tick += new EventHandler(exectuteRecognizeUserFaceTimerAsync);
-                    timerasyncRecognizeUserFace.Interval = new TimeSpan(0, 0, 21);
-                    timerasyncRecognizeUserFace.Start();
+                    timerRecognizeUserFace.Start();
+
                     this.starttimer = false;
                 }
             
@@ -543,7 +512,11 @@ namespace FRMC_Kinect
 
         private void executeScanLocalImageTimerAsynch(object sender, EventArgs e)
         {
-            CreateThumbnail2(filename, bodyBitmap);
+            timerScanSaveLocal.Stop();
+
+            CreateThumbnail2(filename, bodyBitmap); 
+            Console.WriteLine("Lokale Scan Datei gespeichert.");
+            
         }
 
         /// <summary>
@@ -551,13 +524,15 @@ namespace FRMC_Kinect
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void executeUploadTimer(object sender, EventArgs e)
+        private void executeUploadTimerAsynch(object sender, EventArgs e)
         {
-            timerasyncScanSaveLocal.Stop();
+            timerScanSaveLocal.Stop();
+            timerUpload.Stop();
 
             ftpup2.scanupload(filename);
+            Console.WriteLine("Lokale Scan Datei auf FTP hochgeladen");
 
-            timerasyncScanSaveLocal.Start();
+            //timerScanSaveLocal.Start();
 
         }
 
@@ -577,17 +552,21 @@ namespace FRMC_Kinect
 
             if (pictureAvailable)
             {
-                timerasyncScanSaveLocal.Stop();
+                timerScanSaveLocal.Stop();
                 timerUpload.Stop();
-                timerasyncRecognizeUserFace.Stop();
+                timerRecognizeUserFace.Stop();
 
                 klemon.RecognizeUserFace();
+                Console.WriteLine("Gesichter von KeyLemon erkannt.");
+                //var task = klemon.RunRecognizeUserFaceAsAsync();
+                //await task;
+
                 findUserIdbyModelId();
                 findUserIdbyModelId2();
 
-                timerasyncScanSaveLocal.Start();
-                timerUpload.Start();
-                timerasyncRecognizeUserFace.Start();
+                //timerasyncScanSaveLocal.Start();
+                //timerUpload.Start();
+                //timerasyncRecognizeUserFace.Start();
             }
 
 
@@ -595,6 +574,7 @@ namespace FRMC_Kinect
 
         
         #endregion
+
 
 
         #region create thumbnail
@@ -645,9 +625,6 @@ namespace FRMC_Kinect
         }
         #endregion
 
-
-
-        
 
 
         #region create thumbnail
@@ -743,6 +720,11 @@ namespace FRMC_Kinect
 
             }          
         }
+
+        public void startTimer_Click(Object sender, RoutedEventArgs args)
+        {
+            this.starttimer = true;
+        }       
 
         public void test_Click(Object sender, RoutedEventArgs args)
         {

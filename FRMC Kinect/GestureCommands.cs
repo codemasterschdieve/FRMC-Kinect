@@ -10,9 +10,8 @@ namespace FRMC_Kinect
     public class GestureCommands
     {
         private bool isPlaying = false;
-        private bool isPaused = false;
+        private bool isStarted = false;
         private bool commandModeActive = false;
-        //private  string lastGestureAction;
         private string currentGestureAction;
         private string logMessage = "";
         private MediaPlayerController mediaPlayer;
@@ -40,10 +39,10 @@ namespace FRMC_Kinect
             commandModeAction();
 
             //Startet den Player
-            startPlayAction();
+            startPlayPauseAction();
 
             //Pausiert den Player
-            pauseAction();
+            stopAction();
 
             return logMessage;
         }
@@ -62,16 +61,12 @@ namespace FRMC_Kinect
         }
 
         /// <summary>
-        /// Wenn der Player noch nicht gestarte ist wird er gestartet, wenn er nur pausiert ist wird Play
-        /// abgespielt.
+        /// Wenn der Player noch nicht gestarte ist wird er gestartet, wenn er schon läuft wird pausiert.
         /// </summary>
-        private void startPlayAction()
+        private void startPlayPauseAction()
         {
-            if (commandModeActive && !isPlaying && currentGestureAction == "Open")
+            if (commandModeActive && currentGestureAction == "Open" && !isStarted && !isPlaying )
             {
-                //todo 
-                if (!isPlaying)
-                {
                     List<List<string>> currentUserGenres = new List<List<string>>(); ;
                     foreach (User user in currentUserList)
                     {
@@ -85,6 +80,7 @@ namespace FRMC_Kinect
                         mediaPlayer.PlayGenrePlaylist(genreToPlay);
                         logMessage = "Start Media Player mit Genre: " + genreToPlay;
                         commandModeActive = false;
+                        isStarted = true;
                         isPlaying = true;
                     }
                     else
@@ -93,11 +89,16 @@ namespace FRMC_Kinect
                         MessageBox.Show(logMessage);
                     }
                     
-
-                }
             }
-            else if (commandModeActive && isPlaying && currentGestureAction == "Open")
+            //Pausieren, wenn der Player schon läuft
+            else if (commandModeActive && currentGestureAction == "Open" && isStarted && isPlaying)
             {
+                mediaPlayer.Pause();
+                logMessage = "Pause Media Player";
+                commandModeActive = false;
+                isPlaying = false;
+            //Starten wenn Player pausiert
+            } else if (commandModeActive && currentGestureAction == "Open" && isStarted && !isPlaying) {
                 mediaPlayer.Play();
                 logMessage = "Play Media Player";
                 commandModeActive = false;
@@ -109,14 +110,14 @@ namespace FRMC_Kinect
         /// Pausiert den Player wenn der Command Mode aktiv ist, 
         /// der Player ein Song abspielt und die Geste der Pausegeste entspricht
         /// </summary>
-        private void pauseAction()
+        private void stopAction()
         {
             if (commandModeActive && isPlaying && currentGestureAction == "Closed")
             {
-                mediaPlayer.Pause();
+                mediaPlayer.Stop();
                 isPlaying = false;
-                isPaused = true;
-                logMessage = "Pause Media Player";
+                isStarted = false;
+                logMessage = "Stop Media Player";
                 commandModeActive = false;
             }
         }

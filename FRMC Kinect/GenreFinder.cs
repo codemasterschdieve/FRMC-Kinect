@@ -21,7 +21,7 @@ namespace FRMC_Kinect
             int amountUsers = genreLists.Count;
 
             //Wenn die genreLists keinen Inhalt haben, dann wird null zurück gegeben.
-            if (amountUsers > 1)
+            if (amountUsers >= 1)
             {          
                 List<string> matchingGenres = null;
             

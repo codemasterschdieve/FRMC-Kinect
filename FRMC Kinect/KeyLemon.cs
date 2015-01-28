@@ -95,7 +95,7 @@ namespace FRMC_Kinect
             catch (Exception exc)
             {
                 mySqlController.DeleteUserByUserId(user);
-                MessageBox.Show("Gesichtserkennungsfehler. User nicht registriert: " + response2["errors"]);
+                MessageBox.Show("Gesichtserkennungsfehler. User nicht registriert: ");
                 Console.WriteLine(exc.StackTrace);
             }
             
@@ -161,11 +161,15 @@ namespace FRMC_Kinect
             }
 
 
-
-
-
+            
 
         }
+
+        //public async Task RunRecognizeUserFaceAsAsync()
+        //{
+        //    await Task.Run(() => RecognizeUserFace());
+            
+        //}
 
         private void ReadAllBytes(string p)
         {

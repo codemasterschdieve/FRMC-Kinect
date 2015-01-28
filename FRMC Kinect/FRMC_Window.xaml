@@ -20,8 +20,9 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="NavigateMainwindow" Content="Zur Startseite"  HorizontalAlignment="Left" TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="350px,0,0,0" Grid.Column="0" Click="navigateBtnMainWindow_Click"/>
+                <Button x:Name="NavigateMainwindow" Content="Zur Startseite"  HorizontalAlignment="Left" TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="150px,0,0,0" Grid.Column="0" Click="navigateBtnMainWindow_Click"/>
                 <Button x:Name="NavigateRegister"  Content="Zur Registration" HorizontalAlignment="Right"  TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="100px,0,0,0" Grid.Column="1" Click="navigateBtnRegister_Click"/>
+                <Button x:Name="StartRegister"  Content="Scan" HorizontalAlignment="Right"  TextBlock.TextAlignment="Center" FontSize="40px" Width="300px" Margin="100px,0,0,0" Grid.Column="2" Click="startTimer_Click"/>
 
 
             </Grid>
@@ -105,19 +106,19 @@
 
 
             <StackPanel Grid.Column="1" Grid.Row="0"  >
-                <Label x:Name="Personen" Grid.Row="1" TextBlock.TextAlignment="Center" FontSize="20px" Content="Erkannte Personen:"/>
+                <Label x:Name="Personen" Grid.Row="1" TextBlock.TextAlignment="Center" FontSize="20px" Content="Erkannte Personen: "/>
                 <ListBox Name="ListBox1">
 
                 </ListBox>
 
  
 
-                <Label x:Name="Genre" Grid.Row="1" TextBlock.TextAlignment="Center" FontSize="20px" Content="Status:"/>
+                <Label x:Name="Genre" Grid.Row="1" TextBlock.TextAlignment="Center" FontSize="20px" Content="Status: "/>
                 <TextBlock Name="CurrentGestureTextBlock">
 
                 </TextBlock>
 
-                <Label x:Name="Personen2" Grid.Row="1" TextBlock.TextAlignment="Center" FontSize="20px" Content="Gespreicherte Personen mit Score:"/>
+                <Label x:Name="Personen2" Grid.Row="1" TextBlock.TextAlignment="Center" FontSize="20px" Content="Gespeicherte Personen mit Score: "/>
                 <ListView x:Name="Listviewscore"></ListView>
                 
 
