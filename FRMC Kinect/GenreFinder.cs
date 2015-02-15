@@ -17,7 +17,7 @@ namespace FRMC_Kinect
         /// <returns></returns>
         public static string FindMatch(List<List<string>> genreLists)
         {
-            string match = null;
+            string match = "Kein Match gefunden";
             int amountUsers = genreLists.Count;
 
             //Wenn die genreLists keinen Inhalt haben, dann wird null zurück gegeben.
@@ -41,7 +41,7 @@ namespace FRMC_Kinect
           
                 if(matchingGenres.Count > 1) {
                     //Wenn es mehrere passende genres gibt muss ein der passenden ausgewählt werden
-                    int randomIndex = rnd.Next(matchingGenres.Count);
+                    int randomIndex = rnd.Next(0, matchingGenres.Count);
                     match = matchingGenres.ElementAt(randomIndex);
                 
                 } else {

@@ -85,7 +85,7 @@ namespace FRMC_Kinect
                     }
                     else
                     {
-                        logMessage = "Kein Genre gefunden";
+                        logMessage = "Kein Genre gefunden. Fehler: " + genreToPlay;
                         MessageBox.Show(logMessage);
                     }
                     
@@ -112,7 +112,7 @@ namespace FRMC_Kinect
         /// </summary>
         private void stopAction()
         {
-            if (commandModeActive && isPlaying && currentGestureAction == "Closed")
+            if (commandModeActive && isStarted && currentGestureAction == "Closed")
             {
                 mediaPlayer.Stop();
                 isPlaying = false;
