@@ -4,8 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+///@author Tobias Moser, Jan Plank, Stefan Sonntag
+
 namespace FRMC_Kinect
 {
+
+    /// <summary>
+    /// Contains global constants
+    /// </summary>
     public class Constants
     {
 

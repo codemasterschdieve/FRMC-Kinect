@@ -6,9 +6,14 @@ using System.Net;
 using System.Text;
 using System.Windows;
 
+///@author Tobias Moser, Jan Plank, Stefan Sonntag
+
 namespace FRMC_Kinect
 {
-   public class Ftp
+    /// <summary>
+    /// Controls the access to the ftp server functions
+    /// </summary>
+   public class FTPController
     {
         public void modelupload(string user_Id, string filename)
         {
@@ -21,9 +26,6 @@ namespace FRMC_Kinect
             // This example assumes the FTP site uses anonymous logon.
             request.Credentials = new NetworkCredential("f009fabd", "qwa1qwa1");
 
-            // Copy the contents of the file to the request stream.
-          //  StreamReader sourceStream = new StreamReader(@"F:\test.png");
-                 // byte [] fileContents = Encoding.UTF8.GetBytes(sourceStream.ReadToEnd());
 
            byte[] fileContents = File.ReadAllBytes(filename);
 

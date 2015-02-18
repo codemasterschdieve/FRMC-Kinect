@@ -74,14 +74,14 @@
     <Compile Include="FRMC_Window.xaml.cs">
       <DependentUpon>FRMC_Window.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ftp.cs" />
+    <Compile Include="FTPController.cs" />
     <Compile Include="GenreFinder.cs" />
     <Compile Include="GestureCommands.cs" />
-    <Compile Include="KeyLemon.cs" />
+    <Compile Include="KeyLemonController.cs" />
     <Compile Include="MediaPlayerController.cs" />
     <Compile Include="MySqlController.cs" />
-    <Compile Include="Register.xaml.cs">
-      <DependentUpon>Register.xaml</DependentUpon>
+    <Compile Include="Registration_Window.xaml.cs">
+      <DependentUpon>Registration_Window.xaml</DependentUpon>
     </Compile>
     <Compile Include="User.cs" />
     <Page Include="FRMC_Window.xaml">
@@ -100,7 +100,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Register.xaml">
+    <Page Include="Registration_Window.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

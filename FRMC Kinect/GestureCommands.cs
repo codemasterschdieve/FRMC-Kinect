@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
+
+///@author Tobias Moser, Jan Plank, Stefan Sonntag
+
 namespace FRMC_Kinect
 {
     public class GestureCommands

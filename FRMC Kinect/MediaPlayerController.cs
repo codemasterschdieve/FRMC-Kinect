@@ -2,25 +2,15 @@
 using System.Windows;
 using WMPLib;
 
+
+///@author Tobias Moser, Jan Plank, Stefan Sonntag
+
 namespace FRMC_Kinect
 {
     public class MediaPlayerController
     {
         // [ C# ]
         WindowsMediaPlayer Player;
-
-        //private MediaPlayerController()
-        //{
-        //    Player = new WindowsMediaPlayer();
-        //}
-
-        //public MediaPlayerController initMediaPlayer()
-        //{
-        //    if (Player == null)
-        //    {
-        //        new MediaPlayerController();
-        //    }
-        //}
 
         public MediaPlayerController()
         {
@@ -33,6 +23,10 @@ namespace FRMC_Kinect
 
         }
 
+        /// <summary>
+        /// Spiel angegebene Datei ab. Vor allem für Testzwecke geeignet.
+        /// </summary>
+        /// <param name="url"></param>
         private void PlayFile(String url)
         {
             Player.uiMode = "full";
@@ -41,13 +35,9 @@ namespace FRMC_Kinect
             Player.MediaError +=
                 new WMPLib._WMPOCXEvents_MediaErrorEventHandler(Player_MediaError);
             Player.URL = url;
-            //Process.Start("wmplayer.exe");
             Player.controls.play();
 
         }
-
-
-
 
         private void Player_PlayStateChange(int NewState)
         {
@@ -55,7 +45,6 @@ namespace FRMC_Kinect
             {
                 MessageBox.Show("Close");
             }
-            //MessageBox.Show("state changed");
         }
 
         private void Player_MediaError(object pMediaObject)
@@ -63,6 +52,9 @@ namespace FRMC_Kinect
             MessageBox.Show("Cannot play media file.");
         }
 
+        /// <summary>
+        /// Statische Datei Abspielen
+        /// </summary>
         public void StartPlayer()
         {
             PlayFile(@"C:\Kinect\test.mp3");
@@ -88,9 +80,13 @@ namespace FRMC_Kinect
             Player.controls.fastForward();
         }
 
+        /// <summary>
+        /// Spielt das übergebene Genre ab. Falls es kein Song mit dem Genre gibt,
+        /// wird eine Fehlermeldung ausgegeben.
+        /// </summary>
+        /// <param name="genre"></param>
         public void PlayGenrePlaylist(string genre)
         {
-            //IWMPPlaylistArray myPlaylist = Player.playlistCollection.getByName("Kinect");
             IWMPPlaylist pl = Player.mediaCollection.getByGenre(genre);
             if (pl.count > 1)
             {
@@ -101,11 +97,6 @@ namespace FRMC_Kinect
             {
                 MessageBox.Show("Keine Playlist gefunden");
             }
-            
-
-
-            //IWMPMedia objMedia = Player.currentMedia;
-            //MessageBox.Show(objMedia.getItemInfo("Genre"));
 
         }
 

@@ -27,19 +27,18 @@ using System.Windows.Threading;
 
 
 
-
+///@author Tobias Moser, Jan Plank, Stefan Sonntag
 
 
 
 namespace FRMC_Kinect
 {
- 
+
+    /// <summary>
+    /// Interaction logic for FRMC_Window.xaml
+    /// </summary>
     public partial class FRMC_Window : Window, INotifyPropertyChanged
     {
-
-
-
-
 
         #region members
 
@@ -47,7 +46,7 @@ namespace FRMC_Kinect
         /// Instantiate mySqlController to get access to the remote mysql database
         /// </summary>
         MySqlController mySqlController = new MySqlController();
-       
+
 
         /// <summary>
         /// Instantiate active Kinect sensor
@@ -160,7 +159,7 @@ namespace FRMC_Kinect
         private Byte[] imagedata = null;
 
         //Stellte Gesten Commands für den MediaPlayer zu verfügung
-        
+
         /// <summary>
         /// Instantiate gestureCommands to make the gesture commands for the media player available
         /// </summary>
@@ -170,13 +169,13 @@ namespace FRMC_Kinect
         /// <summary>
         /// Instantiate keylemon to get access to the keylemon api  
         /// </summary>
-        KeyLemon klemon = new KeyLemon();
+        KeyLemonController klemon = new KeyLemonController();
 
         /// <summary>
         /// Instantiate userList to save user objects
         /// </summary>
         List<User> userList = new List<User>();
-        
+
         /// <summary>
         /// Instantiate timer for exectue functions in time intervalls
         /// </summary>
@@ -190,7 +189,7 @@ namespace FRMC_Kinect
         // <summary>
         /// Instantiate timer for exectue functions in time intervalls
         /// </summary>
-        DispatcherTimer timerScanSaveLocal= new DispatcherTimer();
+        DispatcherTimer timerScanSaveLocal = new DispatcherTimer();
 
         /// <summary>
         /// Starting timer flag
@@ -205,7 +204,7 @@ namespace FRMC_Kinect
         /// <summary>
         /// Instantiate ftp object to get access to the ftp server functions
         /// </summary>
-        Ftp ftpup2 = new Ftp();
+        FTPController ftpup2 = new FTPController();
 
 
         /// <summary>
@@ -246,42 +245,46 @@ namespace FRMC_Kinect
             {
                 return currentGestureImage;
             }
-    
+
         }
 
-        
+
 
         #endregion
 
-       
 
+        #region constructor
         /// <summary>
         /// Constructor
         /// </summary>
         public FRMC_Window()
         {
-
-
             InitializeComponent();
+            this.Show();
         }
+        #endregion
 
+
+        #region closing handler
         /// <summary>
         /// Window Closing Event
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void DataWindow_Closing(object sender, CancelEventArgs e)
+        void FRMCDataWindow_Closing(object sender, CancelEventArgs e)
         {
             mySqlController.closeConnection();
-
         }
+        #endregion
 
+
+        #region loading handler
         /// <summary>
         /// Window Loading Event
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void DataWindow_Open(object sender, RoutedEventArgs e)
+        void FRMCDataWindow_Open(object sender, RoutedEventArgs e)
         {
 
 
@@ -331,8 +334,6 @@ namespace FRMC_Kinect
             //this.colorFrameReader.FrameArrived += this.Reader_ColorFrameArrived;
 
             this.multiFrameSourceReader.MultiSourceFrameArrived += Reader_MultiSourceFrameArrived;
-            //this.multiFrameSourceReader.MultiSourceFrameArrived += this.Reader_FrameArrived;
-
 
             // open the sensor
             this.kinectSensor.Open();
@@ -345,7 +346,7 @@ namespace FRMC_Kinect
              * ********************************************************************************************/
             timerScanSaveLocal.Tick += new EventHandler(executeScanLocalImageTimerAsynch);
             timerScanSaveLocal.Interval = new TimeSpan(0, 0, 1);
-   
+
             timerUpload.Tick += new EventHandler(executeUploadTimerAsynch);
             timerUpload.Interval = new TimeSpan(0, 0, 4);
 
@@ -354,10 +355,10 @@ namespace FRMC_Kinect
 
 
         }
+        #endregion
 
 
-       
-
+        #region MultiSourceFrameArrived Handler
         /// <summary>
         /// Für GestureCommands
         /// </summary>
@@ -369,49 +370,47 @@ namespace FRMC_Kinect
 
             using (ColorFrame colorFrame = reference.ColorFrameReference.AcquireFrame())
             {
-                    if (colorFrame != null)
+                if (colorFrame != null)
+                {
+                    FrameDescription colorFrameDescription = colorFrame.FrameDescription;
+
+                    using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
                     {
-                        FrameDescription colorFrameDescription = colorFrame.FrameDescription;
+                        this.bodyBitmap.Lock();
 
-                        using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
+                        // verify data and write the new color frame data to the display bitmap
+                        if ((colorFrameDescription.Width == this.bodyBitmap.PixelWidth) && (colorFrameDescription.Height == this.bodyBitmap.PixelHeight))
                         {
-                            this.bodyBitmap.Lock();
+                            colorFrame.CopyConvertedFrameDataToIntPtr(
+                                this.bodyBitmap.BackBuffer,
+                                (uint)(colorFrameDescription.Width * colorFrameDescription.Height * 4),
+                                ColorImageFormat.Bgra);
 
-                            // verify data and write the new color frame data to the display bitmap
-                            if ((colorFrameDescription.Width == this.bodyBitmap.PixelWidth) && (colorFrameDescription.Height == this.bodyBitmap.PixelHeight))
-                            {
-                                colorFrame.CopyConvertedFrameDataToIntPtr(
-                                    this.bodyBitmap.BackBuffer,
-                                    (uint)(colorFrameDescription.Width * colorFrameDescription.Height * 4),
-                                    ColorImageFormat.Bgra);
+                            this.bodyBitmap.AddDirtyRect(new Int32Rect(0, 0, this.bodyBitmap.PixelWidth, this.bodyBitmap.PixelHeight));
 
-                                this.bodyBitmap.AddDirtyRect(new Int32Rect(0, 0, this.bodyBitmap.PixelWidth, this.bodyBitmap.PixelHeight));
-
-                            }
-
-                            this.bodyBitmap.Unlock();
                         }
+
+                        this.bodyBitmap.Unlock();
                     }
                 }
+            }
+
+            // local filepath where the scan picture is saved
+            filename = "C:\\Kinect\\scan.jpg";
 
 
-                filename = "C:\\Kinect\\scan.jpg";
-                //CreateThumbnail2(filename, bodyBitmap);
+            //Timer Starten wenn der Scan Button gedrückt wurde
+            if (starttimer)
+            {
+                timerScanSaveLocal.Start();
 
-                //ftpup2.scanupload(filename);
-                
-                //Timer Starten wenn der Scan Button gedrückt wurde
-                if (starttimer)
-                {
-                    timerScanSaveLocal.Start();
+                timerUpload.Start();
 
-                    timerUpload.Start();
+                timerRecognizeUserFace.Start();
 
-                    timerRecognizeUserFace.Start();
+                this.starttimer = false;
+            }
 
-                    this.starttimer = false;
-                }
-            
             // Body
             using (var frame = reference.BodyFrameReference.AcquireFrame())
             {
@@ -430,7 +429,7 @@ namespace FRMC_Kinect
                             {
                                 // Find the joints
                                 Joint handRight = body.Joints[JointType.HandRight];
-                                Joint thumbRight = body.Joints[JointType.ThumbRight];                             
+                                Joint thumbRight = body.Joints[JointType.ThumbRight];
 
                                 // Find the hand states
                                 string rightHandState = "-";
@@ -454,7 +453,7 @@ namespace FRMC_Kinect
                                     default:
                                         break;
                                 }
-                                
+
                                 try
                                 {
                                     if (isValidGesture)
@@ -469,7 +468,7 @@ namespace FRMC_Kinect
                                         CurrentGestureTextBlock.Text = "Keine Geste erkannt";
                                         currentGestureImage = null;
                                     }
-                                    
+
                                 }
                                 catch (Exception ex)
                                 {
@@ -484,12 +483,19 @@ namespace FRMC_Kinect
             }
 
         }
+        #endregion
 
+
+        #region change gesture image
+        /// <summary>
+        /// Change the gesture image in dependeny on the gesture
+        /// </summary>
+        /// <param name="gesture"></param>
         private void ChangeGestureImage(string gesture)
         {
             var binding = new Binding { Source = currentGestureImage };
             GestureIcon.SetBinding(System.Windows.Controls.Image.SourceProperty, binding);
-            
+
 
             switch (gesture)
             {
@@ -507,6 +513,8 @@ namespace FRMC_Kinect
                     break;
             }
         }
+        #endregion
+
 
         #region time triggered functions
 
@@ -514,9 +522,9 @@ namespace FRMC_Kinect
         {
             timerScanSaveLocal.Stop();
 
-            CreateThumbnail2(filename, bodyBitmap); 
+            CreateThumbnail2(filename, bodyBitmap);
             Console.WriteLine("Lokale Scan Datei gespeichert.");
-            
+
         }
 
         /// <summary>
@@ -572,31 +580,9 @@ namespace FRMC_Kinect
 
         }
 
-        
+
         #endregion
 
-
-
-        #region create thumbnail
-        ///// <summary>
-        ///// Saves the writable bitmap in the local file system
-        ///// </summary>
-        ///// <param name="filename"></param>
-        ///// <param name="image"></param>
-        //public void CreateThumbnail(string filename, BitmapSource image)
-        //{
-        //    if (filename != string.Empty)
-        //    {
-        //        using (FileStream stream = new FileStream(filename, FileMode.Create))
-        //        {
-        //            PngBitmapEncoder encoder = new PngBitmapEncoder();
-        //            encoder.Frames.Add(BitmapFrame.Create(image));
-        //            encoder.Save(stream);
-        //            stream.Close();
-        //        }
-        //    }
-        //}
-        #endregion
 
         #region navigation
         /// <summary>
@@ -619,12 +605,11 @@ namespace FRMC_Kinect
         /// <param name="e"></param>
         private void navigateBtnRegister_Click(object sender, RoutedEventArgs e)
         {
-            var newwindow = new Register();
+            var newwindow = new Registration_Window();
             newwindow.Show();
             this.Close();
         }
         #endregion
-
 
 
         #region create thumbnail
@@ -649,6 +634,10 @@ namespace FRMC_Kinect
         #endregion
 
 
+        #region find user by modelid
+        /// <summary>
+        /// get user by modelid
+        /// </summary>
         public void findUserIdbyModelId2()
         {
             List<string> vornachuser = new List<string>();
@@ -660,7 +649,7 @@ namespace FRMC_Kinect
             }
 
             //Alle erkannten user löschen
-           
+
 
             foreach (var modelId in klemon.Allemodelids)
             {
@@ -674,39 +663,30 @@ namespace FRMC_Kinect
 
 
             }
-            for(int i=0;i< klemon.Score.Count; i++)
+            for (int i = 0; i < klemon.Score.Count; i++)
             {
                 System.Diagnostics.Debug.WriteLine(vornachuser.ElementAt(i));
 
                 Listviewscore.Items.Add(vornachuser.ElementAt(i) + " Score:" + klemon.Score.ElementAt(i).ToString());
-                //if(klemon.Score.ElementAt(i) > 35)
-                //{
-                //    Listviewscore.Background = System.Windows.Media.Brushes.Green;
-                //}
-                //else
-                //{
-                //    Listviewscore.Background = System.Windows.Media.Brushes.Red;
-                //}
+
 
             }
 
-        }   
+        }
 
-        public void findUserIdbyModelId() {
+        public void findUserIdbyModelId()
+        {
 
-            //while (ListBox1.Items.Count > 0)
-            //{
-            //    ListBox1.Items.Remove(ListBox1.Items);
-            //}
 
-            if (ListBox1.Items.Count > 0){
+            if (ListBox1.Items.Count > 0)
+            {
 
                 ListBox1.Items.Clear();
             }
 
             //Alle erkannten user löschen
-              userList.Clear();
-                      
+            userList.Clear();
+
             foreach (var modelId in klemon.ErkannteModels)
             {
                 User detectedUser = new User();
@@ -715,16 +695,25 @@ namespace FRMC_Kinect
 
                 userList.Add(detectedUser);
                 ListBox1.Items.Add(detectedUser.Vorname + " " + detectedUser.Nachname);
-                
-                
 
-            }          
+
+
+            }
         }
+        #endregion
 
+
+        #region timer event click handler
+        /// <summary>
+        /// Click Handler that is activated by clicking the scannen button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         public void startTimer_Click(Object sender, RoutedEventArgs args)
         {
             this.starttimer = true;
-        }       
+        }
+        #endregion
 
         public void test_Click(Object sender, RoutedEventArgs args)
         {
@@ -740,15 +729,7 @@ namespace FRMC_Kinect
 
             MessageBox.Show(match);
 
-            //User user = new User();
-            //user.ModelId = "0b3dba48-9779-421f-b06c-743e06c21e15";
-            //user = mySqlController.findUserWithGenreByModelId(user);
-
-            //string genreIdsString = string.Join(",", user.MusicGenres.ToArray());
-            //string genreNamesString = string.Join(",", user.MusicGenreNames.ToArray());
-
-            //MessageBox.Show("user: " + user.Vorname + " ids: " + genreIdsString + " genre names: " + genreNamesString);
-        }       
+        }
     }
-        
-}   
+
+}

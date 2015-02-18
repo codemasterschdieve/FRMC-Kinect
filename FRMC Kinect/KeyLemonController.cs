@@ -10,10 +10,14 @@ using System.Windows;
 using MySql.Data.MySqlClient;
 
 
+///@author Tobias Moser, Jan Plank, Stefan Sonntag
 
 namespace FRMC_Kinect
 {
-    class KeyLemon
+    /// <summary>
+    /// Controls the access to the keylemon api
+    /// </summary>
+    class KeyLemonController
     {
         MySqlController mySqlController = new MySqlController();
         KLAPI api = new KLAPI("Tobi0604", "qUDuBnzvYCJsxcDD4nnyHWCtiHbwU7rmGxHdh8RXbcOjN24m2TJcDI", "https://api.keylemon.com");
@@ -61,14 +65,14 @@ namespace FRMC_Kinect
             user.UserId = userId2;
 
             // We can train using URLs of images
-            String[] penelope_urls = new String[1]{
+            String[] model_urls = new String[1]{
             "http://www.frmc.wi-stuttgart.de/scan/"  + userId + "model.jpg" };
 
             // Create a model using the URLs, the data and the face_list
             //response = api.CreateFaceModel(null, byteImage[1][0] , null, User_Id);
             try
             {
-                response = api.CreateFaceModel(penelope_urls, null, null, userId + "_" + vorname + nachname);
+                response = api.CreateFaceModel(model_urls, null, null, userId + "_" + vorname + nachname);
             }
             catch (Exception ex)
             {

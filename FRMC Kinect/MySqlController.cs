@@ -7,6 +7,8 @@ using MySql.Data.MySqlClient;
 using System.Windows;
 using System.Data;
 
+///@author Tobias Moser, Jan Plank, Stefan Sonntag
+
 namespace FRMC_Kinect
 {
     public  class MySqlController

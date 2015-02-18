@@ -18,7 +18,7 @@
         <Line Grid.Row="1" Stroke="Black" Stretch="Fill" X2="1"/>
         <TextBlock Grid.Row="3" TextAlignment="Center" FontSize="20"> 
         Willkommen bei der FRMC Kinect Anwendung. Sie haben nun die Möglichkeit sich entweder zu registrieren  oder weiter auf den Media Player Controller <LineBreak/> zu navigieren. 
-        Sie können sich entweder über das <Hyperlink NavigateUri=" http://www.frmc.wi-stuttgart.de" RequestNavigate="Hyperlink_RequestNavigate"> Onlineportal</Hyperlink> registrieren oder Sie betätigen den Registrierungsbutton für den Registrierungsprozess. 
+        Über den Registrationsbutton starten Sie den Registrationsprozess. Eine Registration ist für eine spätere Gesichtserkennung obligatorisch.
         </TextBlock>
         <Button Grid.Row="5" Content="Registration" FontSize="40px" Height="80px" Width="400px" Click="navigateBtn_Click"></Button>
         <Button Grid.Row="7" Content="Weiter zum MC" FontSize="40px" Height="80px" Width="400px" Click="navigateBtnMC_Click"></Button>

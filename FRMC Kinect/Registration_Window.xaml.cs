@@ -22,15 +22,17 @@ using System.Runtime.InteropServices;
 using MySql.Data.MySqlClient;
 using System.Threading;
 
+///@author Tobias Moser, Jan Plank, Stefan Sonntag
+
 namespace FRMC_Kinect
 {
     /// <summary>
-    /// Interaction logic for Register.xaml
+    /// Interaction logic for Registration_Window.xaml
     /// </summary>
-    public partial class Register : Window,INotifyPropertyChanged
+    public partial class Registration_Window : Window,INotifyPropertyChanged
     {
 
-        #region membervariablen definition
+        #region members
 
         /// <summary>
         /// Active Kinect sensor
@@ -142,6 +144,10 @@ namespace FRMC_Kinect
         /// </summary>
         private Byte[] imagedata =null;
 
+
+        /// <summary>
+        /// Initialize MySqlController Instance to get access to mysql functions 
+        /// </summary>
         MySqlController mySqlController = new MySqlController();
 
 
@@ -168,24 +174,34 @@ namespace FRMC_Kinect
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        /// <summary>
-        /// KeyLemon Instance
-        /// </summary>
-
-        KeyLemon klemon = new KeyLemon();
 
         /// <summary>
-        /// KeyLemon Instance
+        /// Initialize KeyLemonController Instance to use keylemon api
         /// </summary>
+        KeyLemonController klemon = new KeyLemonController();
 
-        Ftp ftpup = new Ftp();
+
+        /// <summary>
+        /// Initialize FTPController Instance to use ftp functions for uploading images 
+        /// </summary>
+        FTPController ftpup = new FTPController();
+
+        
+        /// <summary>
+        /// filename
+        /// </summary>
+        string filename;
+
 
         /// <summary>
         /// filename
         /// </summary>
-
-        string filename;
         string UserIdGlobal;
+
+
+        /// <summary>
+        /// Initialize Constants Instance to get access to constants
+        /// </summary>
         Constants constants = new Constants();
 
 
@@ -194,8 +210,8 @@ namespace FRMC_Kinect
         #endregion
 
 
-
-        public Register()
+        #region constructor
+        public Registration_Window()
         {
             // get the kinectSensor object
             this.kinectSensor = KinectSensor.GetDefault();
@@ -252,64 +268,7 @@ namespace FRMC_Kinect
 
             InitializeComponent();
         }
-
-
-        #region Window Closing
-        /// <summary>
-        /// Handle Window Closing Event
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MainWindow_Closing(object sender, CancelEventArgs e)
-        {
-
-            // Close kinectSensor
-            if (this.kinectSensor != null)
-            {
-                this.kinectSensor.Close();
-                this.kinectSensor = null;
-            }
-
-
-            if (this.colorFrameReader != null)
-            {
-                // ColorFrameReder is IDisposable
-                this.colorFrameReader.Dispose();
-                this.colorFrameReader = null;
-            }
-
-            if (this.depthFrameReader != null)
-            {
-                // depthFrameReder is IDisposable
-                this.depthFrameReader.Dispose();
-                this.depthFrameReader = null;
-            }
-
-            if (this.bodyIndexFrameReader != null)
-            {
-                // bodyIndexFrameReder is IDisposable
-                this.bodyIndexFrameReader.Dispose();
-                this.bodyIndexFrameReader = null;
-            }
-
-
-            if (this.faceFrameReader != null)
-            {
-                // faceFrameReder is IDisposable
-                this.faceFrameReader.Dispose();
-                this.faceFrameReader = null;
-            }
-
-            if (this.multiFrameSourceReader != null)
-            {
-                // MultiSourceFrameReder is IDisposable
-                this.multiFrameSourceReader.Dispose();
-                this.multiFrameSourceReader = null;
-            }
-
-        }
         #endregion
-
 
 
         #region ColorFrameArrived Handler to get bodyBitmap
@@ -349,7 +308,6 @@ namespace FRMC_Kinect
             }
         }
         #endregion
-
 
 
         #region MultiSourceFrameArrived Handler to get coordinates for the face and display faceBitmap
@@ -537,6 +495,7 @@ namespace FRMC_Kinect
         #endregion
 
 
+        #region clickhandler to display faceimage
         private void faceImage_Click(object sender, RoutedEventArgs e)
         {
 
@@ -563,9 +522,10 @@ namespace FRMC_Kinect
             }
 
         }
+        #endregion
 
 
-
+        #region convert writablebitmap to png bitmap image
         public BitmapImage ConvertWriteableBitmapToBitmapImage(WriteableBitmap wbm)
         {
             BitmapImage faceImage = new BitmapImage();
@@ -582,6 +542,7 @@ namespace FRMC_Kinect
             }
             return faceImage;
         }
+        #endregion
 
 
         #region create thumbnail
@@ -606,61 +567,7 @@ namespace FRMC_Kinect
         #endregion
 
 
-
-        # region popup window definition
-        /// <summary>
-        /// Define popup window
-        /// </summary>
-        Window popup = new Window();
-
-        public void createPopup(string title, int height, int width, string text)
-        {
-
-            // Window popup = new Window();
-            popup.Owner = this;
-            popup.Title = title;
-            popup.Height = height;
-            popup.Width = width;
-
-            Grid grid = new Grid();
-            grid.RowDefinitions.Add(new RowDefinition());
-            grid.RowDefinitions.Add(new RowDefinition());
-            grid.RowDefinitions.Add(new RowDefinition());
-
-
-            TextBlock meldungtext = new TextBlock();
-            meldungtext.Text = text;
-            meldungtext.FontSize = 20;
-          
-
-            Button ok = new Button();
-            ok.Content = "ok";
-            ok.Height = 50;
-            ok.Width = 300;
-            ok.Click += closeWindow;
-
-
-            Grid.SetRow(meldungtext, 0);
-            Grid.SetRow(ok, 2);
-            grid.Children.Add(meldungtext);
-            grid.Children.Add(ok);
-
-            popup.Content = grid;
-            popup.Show();
-
-        }
-
-        private void closeWindow(object sender, RoutedEventArgs e)
-        {
-            //popup.Close();
-            popup.Visibility = Visibility.Hidden;
-        }
-
-       #endregion
-
-
-
-        #region mysql connection
+        #region  create mysql connection
         /// <summary>
         /// Generates a connection string
         /// </summary>
@@ -678,37 +585,36 @@ namespace FRMC_Kinect
             //return the connection string
             return connStr;
         }
-
-        //
-
+        #endregion
 
 
-
-
-        //
-
+        #region register user
+        /// <summary>
+        /// Clickhandler for registration
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void saveUser_Click(object sender, RoutedEventArgs e)
         {
+            // Check if all required textfields have valid values
             if (Firstnametextbox.Text.Length > 0 && Firstnametextbox.Text.Length <= 30 && Lastnametextbox.Text.Length > 0 && Lastnametextbox.Text.Length <= 30 && imagedata != null && Passworttextbox.Password.Length >0 && Passworttextbox.Password.Length <=30 && Passworttextbox.Password == Passwortwdhtextbox.Password && Emailtextbox.Text.Length >0 && Emailtextbox.Text.Length <= 30 && Regex.IsMatch(Emailtextbox.Text,@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
             {
 
                 try
                 {
-             
 
-               
 
+                    // Initialize user instance
                     User user = new User();
 
-              
 
+                    // Allocate textfield value to instance members
                     user.Vorname = Firstnametextbox.Text;
                     user.Nachname = Lastnametextbox.Text;
                     user.Passwort = Passworttextbox.Password;
                     user.Email = Emailtextbox.Text;
 
-
-
+                    // Check if email is unique in db
                     mySqlController.findEmailByEmail(user);
                     var foundemail = mySqlController.findEmailByEmail(user);
                     if (foundemail != null)
@@ -783,9 +689,10 @@ namespace FRMC_Kinect
 
 
 
-
+                    // Save user in mysqldb
                     mySqlController.createUser(user);
 
+                    // Get userId from mysqldb
                     var userId = mySqlController.findUserByEmail(user);
 
 
@@ -794,28 +701,47 @@ namespace FRMC_Kinect
 
                     user.UserId = userId;
 
+                    // Create Kinect directory if it doesn't exist
+                    try
+                    {
+                        if (!Directory.Exists("C:\\Kinect\\"))
+                        {
+                            Directory.CreateDirectory("C:\\Kinect\\");
+                        }
+                    }
+                    catch (Exception except)
+                    {
+                        System.Diagnostics.Debug.WriteLine("CreateDirectoryException: " + except.Message);
+                        MessageBox.Show("CreateDirectoryException: " + except.Message);
+                    }
+
+                    // Define filepath for saving faceImage local 
                     filename = "C:\\Kinect\\" + userId.ToString() + "_gesicht.jpg";
-                    CreateThumbnail(filename, faceBitmap);
+                    // Save faceImage local
+                    CreateThumbnail(filename, faceImage);
 
-
+                    // Save all checked music genres in mysqldb for a certain user
                     mySqlController.createGenreForUser(user);
 
-
+                    // Display which user is saved in mysqldb 
                     string name = user.Vorname + " " + user.Nachname;
                     MessageBox.Show("Daten wurden erfolgreich für den User: " + name + " gespeichert." );
 
 
-
+                    // Uploads the faceImage as model to ftp server
                     ftpup.modelupload(UserIdGlobal, filename);
+                    // Calls the keylemon function to create a model with the previous uploaded faceImage
                     klemon.keyLemonModelCreation(UserIdGlobal, Firstnametextbox.Text, Lastnametextbox.Text, userId2);
-           //         klemon.RecognizeUserFace();
 
+                    // Wait 2 sec before close current window and open frmc_window
                     Thread.Sleep(2000);
-                    this.Close(); //only if you want to close the current form
 
-                    var newwindow = new FRMC_Window(); //create your new form.
-                    newwindow.Show(); //show the new form.
-                    
+                    // Open new frmc_window
+                    var newwindow = new FRMC_Window();
+                    newwindow.Show();
+
+                    // Close current window
+                    this.Close();
 
 
                     }
@@ -836,37 +762,37 @@ namespace FRMC_Kinect
             {
                 if (Firstnametextbox.Text.Length == 0)
                 {
-                  //  createPopup("Meldung", 200, 500, "Bitte tragen Sie etwas in das Feld Vorname ein");
+                 
                     MessageBox.Show("Bitte tragen Sie etwas in das Feld Vorname ein");
                 }
                 else
                     if (Firstnametextbox.Text.Length > 30)
                     {
-                    //    createPopup("Meldung", 200, 500, "In dem Feld Vorname dürfen nicht mehr als 30 Zeichen sein");
+                    
                         MessageBox.Show("In dem Feld Vorname dürfen nicht mehr als 30 Zeichen sein");
                     }
                     else
                         if (Lastnametextbox.Text.Length == 0)
                         {
-                     //       createPopup("Meldung", 200, 500, "Bitte tragen Sie etwas in das Feld Nachname ein");
+                    
                             MessageBox.Show("Bitte tragen Sie etwas in das Feld Nachname ein");
                         }
                         else
                             if (Lastnametextbox.Text.Length > 30)
                             {
-                       //         createPopup("Meldung", 200, 500, "In dem Feld Nachname dürfen nicht mehr als 30 Zeichen sein");
+                      
                                 MessageBox.Show("In dem Feld Nachname dürfen nicht mehr als 30 Zeichen sein");
                             }
                             else
                                 if (Emailtextbox.Text.Length == 0)
                                  {
-                           //         createPopup("Meldung", 200, 500, "Bitte tragen Sie etwas in das Feld Email ein");
+
                                     MessageBox.Show("Bitte tragen Sie etwas in das Feld Email ein");
                                  }
                                  else
                                     if (Emailtextbox.Text.Length > 30)
                                     {
-                             //        createPopup("Meldung", 200, 500, "In dem Feld Email dürfen nicht mehr als 30 Zeichen sein");
+                            
                                      MessageBox.Show("In dem Feld Email dürfen nicht mehr als 30 Zeichen sein");
                                     }
                                         else
@@ -877,25 +803,25 @@ namespace FRMC_Kinect
                                     else
                                         if (Passworttextbox.Password.Length == 0)
                                         {
-                               //             createPopup("Meldung", 200, 500, "Bitte tragen Sie etwas in das Feld Passwort ein");
+                              
                                             MessageBox.Show("Bitte tragen Sie etwas in das Feld Passwort ein");
                                         }
                                         else
                                             if (Passworttextbox.Password.Length > 30)
                                              {
-                                   //              createPopup("Meldung", 200, 500, "In dem Feld Passwort dürfen nicht mehr als 30 Zeichen sein");
+                                  
                                                  MessageBox.Show("In dem Feld Passwort dürfen nicht mehr als 30 Zeichen sein");
                                              }
                                         else
                                             if (Passworttextbox.Password != Passwortwdhtextbox.Password)
                                             {
-                                      //          createPopup("Meldung", 200, 500, "Das Passwörter müssen identisch sein");
+                                      
                                                 MessageBox.Show("Das Passwörter müssen identisch sein");
                                             }
                                             else
                                                 if (imagedata == null)
                                                 {
-                                         //           createPopup("Meldung", 200, 500, "Es ist kein Bild vorhanden");
+                                       
                                                     MessageBox.Show("Es ist kein Bild vorhanden");
                                                 }
 
@@ -905,19 +831,22 @@ namespace FRMC_Kinect
             }
         }
 
-
-
-      
-
-
         #endregion
 
-        void DataWindow_Closing(object sender, CancelEventArgs e)
+
+        #region Window Closing
+        /// <summary>
+        /// Handle Window Closing Event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RegistrationDataWindow_Closing(object sender, CancelEventArgs e)
         {
-          //  mySqlController.closeConnection();
+
         }
+        #endregion
         
-  
+      
 
     }
 }
